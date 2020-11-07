@@ -1,5 +1,5 @@
 # FO3Hax
-**Casual FOnline 3 soft**
+**Casual FOnline 3 ~~bullshit~~ soft**
 
 Main features:
 * Attack only from 1 hex
