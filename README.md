@@ -1,5 +1,5 @@
 # FO3Hax
-Casual FOnline 3 soft
+**Casual FOnline 3 soft**
 
 Main features:
 * Attack only from 1 hex
@@ -13,5 +13,11 @@ Meaning:
 * `Caps Lock` - kind of attack
 * To use 1 hex attack - hold `Shift`
 * Fast reload - `Shift + F5`
+
+Debug feature (comment defined var `RELEASE`):
+* Console
+* All incoming / outgoing packets
+* Ability to send your packets
+
 
 ![интерфейс](imgs/xynta)
