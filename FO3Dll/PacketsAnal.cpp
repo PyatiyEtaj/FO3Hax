@@ -2,38 +2,25 @@
 #include <ws2def.h>
 #include <WinSock2.h>
 
-LPWSABUF Buffer = nullptr;
-LPWSABUF BufferIn = nullptr;
-#define BUFFER_X4_SIZE 4
-WSABUF BufferX4 [BUFFER_X4_SIZE];
-PDWORD Stack = nullptr;
-HookSetter* hs_send = nullptr;
-HookSetter* hs_netprocess = nullptr;
-HookSetter* hs_recv = nullptr;
-DWORD count = 1;
-int NeedDouble = 0;
-DWORD AdrStartSendBytes = 0;
-DWORD CountOfDoublePackets = 5;
-PDWORD FOClient = nullptr;
-bool* OutputP = nullptr;
-bool* InputP = nullptr;
 #define STACKPOS__COUNT_OF_BUFS 2
-#define STACKPOS__BUFFER 1
 
-
+HookSetter* hs_send = nullptr;
+LPWSABUF _buffer = nullptr;
+PDWORD _stack = nullptr;
+bool* _outputP = nullptr;
 void hkWSASend() {
 	_asm
 	{
-		mov dword ptr ds : [Buffer] , eax
-		mov dword ptr ds : [Stack], esp
+		mov dword ptr ds : [_buffer] , eax
+		mov dword ptr ds : [_stack], esp
 	}
 
-	if (Buffer != nullptr && *OutputP)
+	if (_buffer != nullptr && *_outputP)
 	{
 		printf_s(("[SEND] count=%d adr=%p | adr_buf=%p | len=%d\n"),
-			Stack[STACKPOS__COUNT_OF_BUFS], &Buffer->buf, Buffer->buf, Buffer[0].len
+			_stack[STACKPOS__COUNT_OF_BUFS], &_buffer->buf, _buffer->buf, _buffer[0].len
 		);
-		__printer((PBYTE)Buffer[0].buf, Buffer[0].len);
+		__printer((PBYTE)_buffer[0].buf, _buffer[0].len);
 		printf_s(("===========================[WSASendEnd]======================\n\n"));
 	}
 
@@ -43,16 +30,19 @@ void hkWSASend() {
 	__exit();
 }
 
+bool* _inputP = nullptr;
+HookSetter* hs_netprocess = nullptr;
 void hkNetProcess() {
-	if (*InputP)
+	if (*_inputP)
 		printf_s(("*************************************************************\n"));
 	typedef  void(*fTmp)();
 	fTmp __exit = fTmp(hs_netprocess->OriginalOps);
 	__exit();
 }
 
+HookSetter* hs_recv = nullptr;
 void hkWSARecvEnd() {
-	if (*InputP)
+	if (*_inputP)
 		printf_s(("\n===========================[WSARecvEnd]======================\n"));
 	typedef  void(*fTmp)();
 	fTmp __exit = fTmp(hs_recv->OriginalOps);
@@ -61,8 +51,8 @@ void hkWSARecvEnd() {
 
 void PacketsAnal::SetInlineHook(bool *input, bool *output)
 {
-	OutputP = output;
-	InputP = input;
+	_outputP = output;
+	_inputP = input;
 	//if (input) {
 		hs_netprocess = CrtHookSetter((PBYTE)GET_ADR(FO3_NETPROCESS), (DWORD)hkNetProcess, 6);
 		SetHookSetter(hs_netprocess);
