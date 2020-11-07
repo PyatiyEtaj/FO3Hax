@@ -13,3 +13,5 @@ Meaning:
 * `Caps Lock` - kind of attack
 * To use 1 hex attack - hold `Shift`
 * Fast reload - `Shift + F5`
+
+![интерфейс](imgs/xynta)
