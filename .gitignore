@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Builds
+[Rr]elease/
+[Dd]ebug/
+x64/
+.vs/
+
+*.data
+*.txt

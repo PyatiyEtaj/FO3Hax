@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\libs">
+      <UniqueIdentifier>{0a394000-dc02-449e-b7c5-0991854db40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Net">
+      <UniqueIdentifier>{130b4bec-ddf7-4c51-856a-3afc620ee832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\OneHex">
+      <UniqueIdentifier>{93927401-8468-46a4-9504-a3dd8976df73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\OneHex">
+      <UniqueIdentifier>{e4758e5f-04d7-4ede-a2f2-d170cf11e23c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\D3D">
+      <UniqueIdentifier>{1732e291-0657-4016-a321-f2175e873630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\D3D">
+      <UniqueIdentifier>{6701cb04-caba-43ae-a470-eb7e6dbe8a7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Net">
+      <UniqueIdentifier>{7bc5ce09-ac9b-40bd-a25b-7faf61c1c4e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Util">
+      <UniqueIdentifier>{f6e256ba-1887-45c1-9f28-5da409c203a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Util">
+      <UniqueIdentifier>{f1332580-0057-47f7-a1db-7bc155760d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\InGameScripts">
+      <UniqueIdentifier>{6f8dead8-545f-4f59-b719-0990fd0bd9af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\InGameScripts">
+      <UniqueIdentifier>{2d14c2cb-9a4b-4a4c-9539-91f3491b55a4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="httplib.h">
+      <Filter>Файлы заголовков\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Файлы заголовков\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="Fo3Net.h">
+      <Filter>Файлы заголовков\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptsDLL.h">
+      <Filter>Файлы заголовков\OneHex</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>Файлы заголовков\OneHex</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDrawer.h">
+      <Filter>Файлы заголовков\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D.h">
+      <Filter>Файлы заголовков\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketSender.h">
+      <Filter>Файлы заголовков\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketsAnal.h">
+      <Filter>Файлы заголовков\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalyzeNetBuffer.h">
+      <Filter>Файлы заголовков\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="XorStr.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="HookSetter.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ForDebug.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="FO3Funcs.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="UserData.h">
+      <Filter>Файлы заголовков\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Initialization.h">
+      <Filter>Файлы заголовков\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameScripts.h">
+      <Filter>Файлы заголовков\InGameScripts</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptsDLL.cpp">
+      <Filter>Исходные файлы\OneHex</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
+      <Filter>Исходные файлы\OneHex</Filter>
+    </ClCompile>
+    <ClCompile Include="TextDrawer.cpp">
+      <Filter>Исходные файлы\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D.cpp">
+      <Filter>Исходные файлы\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalyzeNetBuffer.cpp">
+      <Filter>Исходные файлы\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketsAnal.cpp">
+      <Filter>Исходные файлы\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketSender.cpp">
+      <Filter>Исходные файлы\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="HookSetter.cpp">
+      <Filter>Исходные файлы\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ForDebug.cpp">
+      <Filter>Исходные файлы\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="FO3Funcs.cpp">
+      <Filter>Исходные файлы\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Исходные файлы\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="UserData.cpp">
+      <Filter>Исходные файлы\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Initialization.cpp">
+      <Filter>Исходные файлы\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameScripts.cpp">
+      <Filter>Исходные файлы\InGameScripts</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source.def">
+      <Filter>Исходные файлы</Filter>
+    </None>
+  </ItemGroup>
+</Project>
