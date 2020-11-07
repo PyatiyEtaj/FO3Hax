@@ -54,7 +54,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 
 		D3D::SetOutputText(
 			nextTime > * fotime 
-			? "heal in " + std::to_string(nextTime - *fotime) 
+			? xorstr("heal in ") + std::to_string(nextTime - *fotime) 
 			: ""
 		);
 
@@ -96,31 +96,31 @@ DWORD CALLBACK DebugThread(LPVOID args)
 			RefreshMe(foclient);
 		}
 
-		/*if (GetAsyncKeyState(VK_NUMPAD7) && 1) {
+		/*if (GetAsyncKeyState(VK_NUMPAD7)) {
 			JustSender js;
 			js.Send();
 		}*/
 
-		if (GetAsyncKeyState(VK_NUMPAD4) && 1) {
+		if (GetAsyncKeyState(VK_NUMPAD4)) {
 			showinput = !showinput;
 		}
 
-		if (GetAsyncKeyState(VK_NUMPAD5) && 1) {
+		if (GetAsyncKeyState(VK_NUMPAD5)) {
 			showoutput = !showoutput;
 		}
 
-		if (GetAsyncKeyState(VK_NUMPAD1) && 1)
+		if (GetAsyncKeyState(VK_NUMPAD1))
 		{
 			system("cls");
 		}
 
-		if (GetAsyncKeyState(VK_F1) && 1)
+		if (GetAsyncKeyState(VK_F1))
 		{
 			debugMode = !debugMode;
 			AnalyzeNetBuffer::SetOutputDebugMessages(debugMode);
 		}
 
-		if (GetAsyncKeyState(VK_END) && 1)
+		if (GetAsyncKeyState(VK_END))
 		{
 			Beep(200, 200);
 			Scripts::UnsetHooks();
@@ -135,7 +135,7 @@ DWORD CALLBACK DebugThread(LPVOID args)
 			break;
 		}
 
-		std::string str = (shift ? "HexMachine Enabled " : xorstr("HexMachine Disabled"));
+		std::string str = (shift ? xorstr("HexMachine Enabled ") : xorstr("HexMachine Disabled"));
 		str += xorstr(" [Shift]\n");
 		str += (showinput ? xorstr(" ShowInput Enabled ") : xorstr(" ShowInput Disabled"));
 		str += xorstr(" [Num4]\n");
@@ -145,7 +145,7 @@ DWORD CALLBACK DebugThread(LPVOID args)
 		str += xorstr(" [F1]\n");
 		str +=
 			nextTime > * fotime
-			? "отхил " + std::to_string(nextTime - *fotime)
+			? xorstr("отхил ") + std::to_string(nextTime - *fotime)
 			: "";
 		D3D::SetOutputText(debugMode ? "" : str);
 
