@@ -17,6 +17,7 @@
 // and optimize them, so all hooks (main functions) work perfectly, in debug mode work nothing 
 // this macros need to turn on/off debug functions (net analizator, console and so on)
 #define RELEASE // if need debug just comment this
+//#define CONSOLE
 
 #define PASS_ARG void*
 #define uint unsigned int
@@ -99,6 +100,14 @@
 		_asm { mov eax, [eax + 10h]}\
 		_asm { jmp eax}
 
+
+struct HaxSettings{
+	bool UseSafe1Hex = true;
+	float Colors[4] = {1.0f, 1.0f, 0.0f, 0.0f};
+	bool IsMenuOpen = false;
+	bool IsImGuiInit = false;
+	bool ShowHealRateCD = true;
+};
 
 /*
 [out]   uint = [ 3176807594] [0xBD5A3CAA] {call=0x464FA0} // msg

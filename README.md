@@ -19,5 +19,5 @@ Debug feature (comment defined var `RELEASE`):
 * All incoming / outgoing packets
 * Ability to send your packets
 
-
-![интерфейс](imgs/xynta)
+# GUI
+![интерфейс1](imgs/gui.JPG)

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\libs">
-      <UniqueIdentifier>{0a394000-dc02-449e-b7c5-0991854db40e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы заголовков\Net">
       <UniqueIdentifier>{130b4bec-ddf7-4c51-856a-3afc620ee832}</UniqueIdentifier>
     </Filter>
@@ -46,16 +43,16 @@
     <Filter Include="Исходные файлы\InGameScripts">
       <UniqueIdentifier>{2d14c2cb-9a4b-4a4c-9539-91f3491b55a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\ImGui">
+      <UniqueIdentifier>{69a63dc7-1f3b-4996-9c23-5bf753f14a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\ImGui">
+      <UniqueIdentifier>{0be21f54-19c1-4fcf-a1ae-2142b819516f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="httplib.h">
-      <Filter>Файлы заголовков\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Файлы заголовков\libs</Filter>
     </ClInclude>
     <ClInclude Include="Fo3Net.h">
       <Filter>Файлы заголовков\Net</Filter>
@@ -96,14 +93,26 @@
     <ClInclude Include="FO3Funcs.h">
       <Filter>Файлы заголовков\Util</Filter>
     </ClInclude>
-    <ClInclude Include="UserData.h">
-      <Filter>Файлы заголовков\Net</Filter>
-    </ClInclude>
     <ClInclude Include="Initialization.h">
       <Filter>Файлы заголовков\Util</Filter>
     </ClInclude>
     <ClInclude Include="InGameScripts.h">
       <Filter>Файлы заголовков\InGameScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Файлы заголовков\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>Файлы заголовков\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx9.h">
+      <Filter>Файлы заголовков\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>Файлы заголовков\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>Файлы заголовков\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,14 +152,29 @@
     <ClCompile Include="utils.cpp">
       <Filter>Исходные файлы\Util</Filter>
     </ClCompile>
-    <ClCompile Include="UserData.cpp">
-      <Filter>Исходные файлы\Net</Filter>
-    </ClCompile>
     <ClCompile Include="Initialization.cpp">
       <Filter>Исходные файлы\Util</Filter>
     </ClCompile>
     <ClCompile Include="InGameScripts.cpp">
       <Filter>Исходные файлы\InGameScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

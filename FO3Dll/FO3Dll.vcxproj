@@ -133,6 +133,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;FO3DLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\..;..;%(AdditionalIncludeDirectories);$(DXSDK_DIR)Include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -171,14 +172,16 @@
     <ClInclude Include="Fo3Net.h" />
     <ClInclude Include="ForDebug.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="httplib.h" />
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="ImGui\imgui_internal.h" />
     <ClInclude Include="InGameScripts.h" />
     <ClInclude Include="Initialization.h" />
-    <ClInclude Include="json.hpp" />
     <ClInclude Include="PacketsAnal.h" />
     <ClInclude Include="PacketSender.h" />
     <ClInclude Include="PathFinder.h" />
-    <ClInclude Include="UserData.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="HookSetter.h" />
     <ClInclude Include="ScriptsDLL.h" />
@@ -192,6 +195,12 @@
     <ClCompile Include="FO3Funcs.cpp" />
     <ClCompile Include="ForDebug.cpp" />
     <ClCompile Include="HookSetter.cpp" />
+    <ClCompile Include="ImGui\imgui.cpp" />
+    <ClCompile Include="ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="InGameScripts.cpp" />
     <ClCompile Include="Initialization.cpp" />
     <ClCompile Include="PacketsAnal.cpp" />
@@ -199,7 +208,6 @@
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="ScriptsDLL.cpp" />
     <ClCompile Include="TextDrawer.cpp" />
-    <ClCompile Include="UserData.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
