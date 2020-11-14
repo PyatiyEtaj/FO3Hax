@@ -1,17 +1,12 @@
 #include <iostream>
 #include "AnalyzeNetBuffer.h"
-#include "framework.h"
 #include "utils.h"
 #include "HookSetter.h"
 #include "D3D.h"
 #include "FO3Funcs.h"
+#include "Logger.h"
 
-const char* OutPushUintMsg   = "[out]   uint = [%d] [0x%X]\n";
-const char* OutPushUcharMsg  = "[out]  uchar = [%d] [0x%X]\n";
-const char* OutPushUshortMsg = "[out] ushort = [%d] [0x%X]\n";
-const char* InWriteUintMsg   = "[in]    uint = [%d] [0x%X]\n";
-const char* InWriteUcharMsg  = "[in]   uchar = [%d] [0x%X]\n";
-const char* InWriteUshortMsg = "[in]  ushort = [%d] [0x%X]\n";
+HaxSettings* _haxSettingsAnalyze;
 
 HookSetter* hs_out_uint;
 HookSetter* hs_out_uchar;
@@ -124,98 +119,79 @@ const char* MessageType(uchar msg) {
 inline void _cdecl IsMessage(DWORD value, const char* type) {
     uchar msg = (value & 0x0000FF00) >> 8;
     (value & 0xFFFF00FF) == 0xBD5A00AA
-        ? printf_s("[%s]    uint = [%11u] [0x%8X] [%s]\n", type, msg, msg, MessageType(msg))
-        : printf_s("[%s]    uint = [%11u] [0x%8X] [%d]\n", type, uint(value), uint(value), value - *_foTime);
+        ? Logger::AddIn("[%s]    uint = [%11u] [0x%8X] [%s]\n", type, msg, msg, MessageType(msg))
+        : Logger::AddIn("[%s]    uint = [%11u] [0x%8X] [%d]\n", type, uint(value), uint(value), value - *_foTime);
 }
 
 void _cdecl Show(DWORD ret, DWORD value, int type) {
     switch (type)
     {
     case SHOW_CHAR:
-        if (*Output)
-            printf_s("[out]  uchar = [%11u] [0x%8X] {call=0x%6X}\n", uchar(value), uchar(value), ret);
-            //printf_s("\tchar = 0x%X;\n", uchar(value));
+        if (_haxSettingsAnalyze->StartOutPackets)
+            Logger::AddOut("[out]  uchar = [%11u] [0x%8X] {call=0x%6X}\n", uchar(value), uchar(value), ret);
         break;
-    case SHOW_INT:
-        if (*Output)
-            printf_s("[out]   uint = [%11u] [0x%8X] {call=0x%6X}\n", uint(value), uint(value), ret);
-            //printf_s("\tint = 0x%X;\n", uint(value));
+    case SHOW_INT:        
+        if (_haxSettingsAnalyze->StartOutPackets)
+            Logger::AddOut("[out]   uint = [%11u] [0x%8X] {call=0x%6X}\n", uint(value), uint(value), ret);
         break;
     case SHOW_SHORT:
-        if (*Output)
-            printf_s("[out] ushort = [%11u] [0x%8X] {call=0x%6X}\n", ushort(value), ushort(value), ret);
-            //printf_s("\tshort = 0x%X;\n", ushort(value));
+        if (_haxSettingsAnalyze->StartOutPackets)
+            Logger::AddOut("[out] ushort = [%11u] [0x%8X] {call=0x%6X}\n", ushort(value), ushort(value), ret);
         break;
 
     case SHOW_IN_CHAR:
-        if (*Input)
-            printf_s("[in]   uchar = [%11u] [0x%8X]\n", uchar(value), uchar(value));
+        if (_haxSettingsAnalyze->StartInPackets)
+            Logger::AddIn("[in]   uchar = [%11u] [0x%8X]\n", uchar(value), uchar(value));
         break;
     case SHOW_IN_BOOL:
-        if (*Input)
-            printf_s("[in]    bool = [%11u] [0x%8X]\n", bool(value), bool(value));
+        if (_haxSettingsAnalyze->StartInPackets)
+            Logger::AddIn("[in]    bool = [%11u] [0x%8X]\n", bool(value), bool(value));
         break;
     case SHOW_IN_INT:
-        //printf_s("[in]    uint = [%11u] [0x%8X] {return=0x%6X}\n", uint(value), uint(value), ret);
-        if (*Input)
+        if (_haxSettingsAnalyze->StartInPackets)
             IsMessage(value, "in");
         break;
     case SHOW_IN_SHORT:
-        if (*Input)
-            printf_s("[in]  ushort = [%11u] [0x%8X]\n", ushort(value), ushort(value));
+        if (_haxSettingsAnalyze->StartInPackets)
+            Logger::AddIn("[in]  ushort = [%11u] [0x%8X]\n", ushort(value), ushort(value));
         break;
     }
 }
 
-void __stdcall hkPushUint() {
+DWORD* __fastcall hkPushUint(DWORD* this_, PASS_ARG, uint val) {
+    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uint);
+    DWORD retAdr;
     _asm {
-        mov eax, [ebp + 8]
-        push SHOW_INT
-        push eax
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-        ; mov eax, hs_out_uint
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
+        mov eax, [ebp+4]
+        mov [retAdr], eax
     }
-    JMP(hs_out_uint)
+    Show(retAdr, val, SHOW_INT);
+    orig ret = orig(hs_out_uint->OriginalOps);
+    return ret(this_, 0, val);
 }
 
-void __stdcall hkPushChar() {
+DWORD* __fastcall hkPushChar(DWORD* this_, PASS_ARG, uchar val) {
+    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uchar);
+    DWORD retAdr;
     _asm {
-        mov eax, [ebp + 8]
-        push SHOW_CHAR
-        push eax
         mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-        ; mov eax, hs_out_uchar
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
+        mov[retAdr], eax
     }
-    JMP(hs_out_uchar)
+    Show(retAdr, val, SHOW_CHAR);
+    orig ret = orig(hs_out_uchar->OriginalOps);
+    return ret(this_, 0, val);
 }
 
-void __stdcall hkPushUshort() {
+DWORD* __fastcall hkPushUshort(DWORD* this_, PASS_ARG, ushort val) {
+    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uint);
+    DWORD retAdr;
     _asm {
-        mov eax, [ebp + 8]
-        push SHOW_SHORT
-        push eax
         mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-        ; mov eax, hs_out_ushort
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
+        mov[retAdr], eax
     }
-    JMP(hs_out_ushort)
+    Show(retAdr, val, SHOW_SHORT);
+    orig ret = orig(hs_out_ushort->OriginalOps);
+    return ret(this_, 0, val);
 }
 
 void __stdcall hkWriteUint() {
@@ -226,10 +202,6 @@ void __stdcall hkWriteUint() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_uint
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_uint)
 }
@@ -242,10 +214,6 @@ void __stdcall hkWriteBool() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_bool
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_bool)
 }
@@ -258,10 +226,6 @@ void __stdcall hkWriteUint_dup() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_uint_dup
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_uint_dup)
 }
@@ -274,10 +238,6 @@ void __stdcall hkWriteChar() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_uchar
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_uchar)
 }
@@ -290,10 +250,6 @@ void __stdcall hkWriteUshort() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_ushort
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_ushort)
 }
@@ -306,18 +262,13 @@ void __stdcall hkWriteUshortDup() {
         push eax
         call Show
         add esp, 4 * 3
-        ; mov eax, hs_in_ushort
-        ; mov eax, [eax + 10h]
-        ; pop ebp
-        ; jmp eax
     }
     JMP(hs_in_ushort)
 }
 
 
-void AnalyzeNetBuffer::InitializationOfAnalyzer(bool* input, bool* output) {
-    Output = output;
-    Input= input;
+void AnalyzeNetBuffer::InitializationOfAnalyzer(HaxSettings* haxSettings) {
+    _haxSettingsAnalyze = haxSettings;
     _foTime = GET_TIME_PTR;
     hs_in_uint = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UINT), (DWORD)hkWriteUint, 5);
     SetHookSetter(hs_in_uint);

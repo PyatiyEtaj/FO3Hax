@@ -2,6 +2,7 @@
 #include "framework.h"
 #include <sstream>
 #include <iomanip>
+#include <string>
 
 namespace ForDebug
 {

@@ -59,3 +59,4 @@ void ForDebug::PrinterBYTE(PBYTE b, int length)
 	}
 	printf_s("\n");
 }
+

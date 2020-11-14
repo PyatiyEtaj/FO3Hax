@@ -54,9 +54,6 @@
     <ClInclude Include="framework.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Fo3Net.h">
-      <Filter>Файлы заголовков\Net</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptsDLL.h">
       <Filter>Файлы заголовков\OneHex</Filter>
     </ClInclude>
@@ -113,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="ImGui\imgui_internal.h">
       <Filter>Файлы заголовков\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Файлы заголовков\D3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Исходные файлы\D3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -88,29 +88,21 @@
 #define SHOW_HIGHLIGHT 0x874358
 //---------------------------------------
 
-
-#define JMP(hs)\
-		_asm { mov eax, hs }\
-		_asm { mov eax, [eax + 10h]}\
-		_asm { pop ebp }\
-		_asm { jmp eax }
-
-#define JMPPURE(hs) \
-		_asm { mov eax, hs}\
-		_asm { mov eax, [eax + 10h]}\
-		_asm { jmp eax}
-
-
-struct HaxSettings{
-	bool UseSafe1Hex = true;
-	float Colors[3] = {1.0f, 1.0f, 0.0f};
-	bool IsMenuOpen = false;
-	bool IsImGuiInit = false;
-	bool ShowHealRateCD = true;
-	int ThreadLatency = 100;
-	int CrossHairMul = 1;
-	bool Uninject = false;
-};
+typedef struct {
+	float Colors[3]		  = { 1.0f, 1.0f, 0.0f };
+	int   ThreadLatency	  = 100;
+	int   CrossHairMul	  = 1;
+	bool  UseSafe1Hex	  = true;
+	bool  ShowHealRateCD  = true;
+	bool  DisableWndProc  = true;
+	bool  IsMenuOpen	  = false;
+	bool  IsImGuiInit	  = false;
+	bool  Uninject		  = false;
+	bool  NeedRefresh     = false;
+	bool  StartInPackets  = false;
+	bool  StartOutPackets = false;
+	bool  OpenPackets     = false;	
+}HaxSettings;
 
 /*
 [out]   uint = [ 3176807594] [0xBD5A3CAA] {call=0x464FA0} // msg

@@ -3,8 +3,7 @@
 #include "HookSetter.h"
 #include "utils.h"
 
-
 namespace PacketsAnal {	
-	void SetInlineHook(bool* input, bool* output);
+	void SetInlineHook(HaxSettings* haxSettings);
 	void Unset();
 }

@@ -1,8 +1,9 @@
 #pragma once
+#include "framework.h"
 
 namespace AnalyzeNetBuffer {
     void SetOutputDebugMessages(bool flag);
-    void InitializationOfAnalyzer(bool* input, bool* output);
+    void InitializationOfAnalyzer(HaxSettings* haxSettings);
     void Unset();
     void SendMsg();
 };

@@ -8,6 +8,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
+#include "Logger.h"
 //#pragma comment(lib, "d3d9")
 //#pragma comment(lib, "d3dx9")
 
@@ -25,7 +26,6 @@ std::string OutputText = "";
 
 int* xPos = 0;
 int* yPos = 0;
-bool* _needMove1Hex;
 
 
 void Init() {
@@ -33,8 +33,6 @@ void Init() {
 	yPos = (int*)GET_ADR(GLOBAL_MOUSE_Y);
 }
 
-char buf [256] = "raz dva tri";
-float f = 0.5f;
 HaxSettings* _haxSettings;
 
 void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
@@ -51,28 +49,45 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.MouseDrawCursor = true;
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+		ImGui::StyleColorsClassic();
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX9_Init(g_pd3dDevice);
-		//ImGui::SetNextWindowSize(ImVec2(210, 320));
 	}
-
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	ImGui::Begin("Ussless hax");
-	ImGui::Text("--------------------------------------------");
-	ImGui::Text("# Attack only from 1 hex (Hold Shift)\n# Healing Rate CD\n# Fast reload (Shift + F5)");
+
+	ImGui::Separator();
+	ImGui::Text("# Attack only from 1 hex (Hold Shift)");
 	ImGui::Checkbox("Use safe 1 hex", &_haxSettings->UseSafe1Hex);
 	ImGui::Checkbox("Show heal rate cd", &_haxSettings->ShowHealRateCD);
+#ifndef RELEASE
+	ImGui::Checkbox("Disable orig WndProc", &_haxSettings->DisableWndProc);
+#endif // !RELEASE
+	if (ImGui::Button("Refresh"))
+		_haxSettings->NeedRefresh = true;
+#ifndef RELEASE
+	ImGui::SameLine();
+	if (ImGui::Button("Open menu Packets"))
+		_haxSettings->OpenPackets = true;
+#endif // !RELEASE
+	ImGui::Dummy(ImVec2(0.0f, 4.0f));
 	ImGui::ColorEdit3("CH colors", _haxSettings->Colors);
 	ImGui::SliderInt("CH mult", &_haxSettings->CrossHairMul, 1, 5);
 	ImGui::SliderInt("Thread latency", &_haxSettings->ThreadLatency, 30, 120);
-	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+	ImGui::Dummy(ImVec2(0.0f, 4.0f));
+	ImGui::Separator();
 	if (ImGui::Button("Uninject"))
 		_haxSettings->Uninject = true;
 	ImGui::SameLine();
 	ImGui::Text(" You will hear `BEEEEP`");
+#ifndef RELEASE
+	if (_haxSettings->OpenPackets)
+		Logger::Draw("Packets", _haxSettings);
+#endif
+	//ImGui::ShowDemoWindow();
 	ImGui::End();
 	ImGui::EndFrame();
 	ImGui::Render();

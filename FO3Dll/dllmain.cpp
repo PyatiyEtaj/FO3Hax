@@ -8,6 +8,7 @@
 #include "PathFinder.h"
 #include "Initialization.h"
 #include "InGameScripts.h"
+#include "Logger.h"
 /*#include <CommCtrl.h>
 #pragma comment(lib, "Comctl32")*/
 
@@ -15,7 +16,7 @@ HaxSettings haxSettings;
 WNDPROC oWndProc;
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	if (haxSettings.IsImGuiInit && (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) || haxSettings.IsMenuOpen))
+	if (haxSettings.IsImGuiInit && (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) || haxSettings.DisableWndProc))
 		return true;
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -28,6 +29,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 	Initializator initializator;
 	initializator.SetInitializator();
 	initializator.Await();
+
 	PBYTE foclient = GetFOClient();
 	PathFinder* pathFinder = new PathFinder();
 	Scripts::EnableOneHex(&shift);
@@ -39,6 +41,10 @@ DWORD CALLBACK MainThread(LPVOID args)
 
 	oWndProc = (WNDPROC)SetWindowLongPtr(FindWindowA(NULL, FO3_WND), GWL_WNDPROC, (LONG_PTR)&WndProc);
 	D3D::Constructor(FO3_WND, &haxSettings);
+#ifndef RELEASE
+	AnalyzeNetBuffer::InitializationOfAnalyzer(&haxSettings);
+	PacketsAnal::SetInlineHook(&haxSettings);
+#endif
 
 	while (true)
 	{
@@ -49,9 +55,11 @@ DWORD CALLBACK MainThread(LPVOID args)
 
 		if ((GetKeyState(VK_INSERT) & 0x1) == haxSettings.IsMenuOpen) {
 			haxSettings.IsMenuOpen = !haxSettings.IsMenuOpen;
+			haxSettings.DisableWndProc = haxSettings.IsMenuOpen;
 		}
 
-		if (shift && vk_f5) {
+		if (haxSettings.NeedRefresh) {
+			haxSettings.NeedRefresh = false;
 			RefreshMe(foclient);
 		}		
 
@@ -61,6 +69,10 @@ DWORD CALLBACK MainThread(LPVOID args)
 			terminateOneHexThread = true;
 			ResumeThread(onehexthread);
 			Sleep(200);
+#ifndef RELEASE
+			PacketsAnal::Unset();
+			AnalyzeNetBuffer::Unset();
+#endif
 			InGameScripts::UnsetHooks();
 			Scripts::UnsetHooks();
 			oWndProc = (WNDPROC)SetWindowLongPtr(FindWindowA(NULL, FO3_WND), GWL_WNDPROC, (LONG_PTR)oWndProc);
@@ -83,7 +95,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 	ExitThread(0);
 }
 
-DWORD CALLBACK DebugThread(LPVOID args)
+/*DWORD CALLBACK DebugThread(LPVOID args)
 {
 	srand(time(NULL));
 	Initializator initializator;
@@ -119,10 +131,10 @@ DWORD CALLBACK DebugThread(LPVOID args)
 			RefreshMe(foclient);
 		}
 
-		/*if (GetAsyncKeyState(VK_NUMPAD7)) {
-			JustSender js;
-			js.Send();
-		}*/
+		//if (GetAsyncKeyState(VK_NUMPAD7)) {
+		//	JustSender js;
+		//	js.Send();
+		//}
 
 		if (GetAsyncKeyState(VK_NUMPAD4)) {
 			showinput = !showinput;
@@ -177,31 +189,6 @@ DWORD CALLBACK DebugThread(LPVOID args)
 	}
 
 	ExitThread(0);
-}
-
-
-
-/*DWORD CALLBACK UIThread(LPVOID args)
-{
-	D3D::Constructor(FO3_WND, NULL, &isMenuOpened);
-	while (true)
-	{
-		if (GetAsyncKeyState(VK_F1)) {
-			isMenuOpened = !isMenuOpened;
-		}
-
-		if (GetAsyncKeyState(VK_END))
-		{
-			isMenuOpened = false;
-			Sleep(100);
-			D3D::Destructor();
-			ForDebug::FreeCons();
-			break;
-		}
-		Sleep(100);
-	}
-	Beep(200, 200);
-	ExitThread(0);
 }*/
 
 
@@ -217,7 +204,7 @@ LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 #ifdef RELEASE
 		CreateThread(0, 0, MainThread, 0, 0, 0);
 #else
-		CreateThread(0, 0, DebugThread, 0, 0, 0);
+		//CreateThread(0, 0, DebugThread, 0, 0, 0);
 #endif
 	}
 	return CallNextHookEx(NULL, nCode, wParam, lParam);

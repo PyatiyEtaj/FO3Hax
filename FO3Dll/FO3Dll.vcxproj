@@ -169,7 +169,6 @@
     <ClInclude Include="AnalyzeNetBuffer.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="FO3Funcs.h" />
-    <ClInclude Include="Fo3Net.h" />
     <ClInclude Include="ForDebug.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -179,6 +178,7 @@
     <ClInclude Include="ImGui\imgui_internal.h" />
     <ClInclude Include="InGameScripts.h" />
     <ClInclude Include="Initialization.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="PacketsAnal.h" />
     <ClInclude Include="PacketSender.h" />
     <ClInclude Include="PathFinder.h" />
@@ -203,6 +203,7 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="InGameScripts.cpp" />
     <ClCompile Include="Initialization.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="PacketsAnal.cpp" />
     <ClCompile Include="PacketSender.cpp" />
     <ClCompile Include="PathFinder.cpp" />
