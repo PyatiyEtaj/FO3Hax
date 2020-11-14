@@ -46,9 +46,8 @@ DWORD CALLBACK MainThread(LPVOID args)
 		vk_f5 = GetAsyncKeyState(VK_F5) != 0;
 		vk_f1 = GetAsyncKeyState(VK_F1) != 0;
 		vk_end = GetAsyncKeyState(VK_END) != 0;
-		//pathFinder->NeedMove = (GetKeyState(VK_CAPITAL) & 1) == 0;
 
-		if (GetAsyncKeyState(VK_INSERT)) {
+		if ((GetKeyState(VK_INSERT) & 0x1) == haxSettings.IsMenuOpen) {
 			haxSettings.IsMenuOpen = !haxSettings.IsMenuOpen;
 		}
 
@@ -74,8 +73,8 @@ DWORD CALLBACK MainThread(LPVOID args)
 		}
 
 		D3D::SetOutputText(
-			haxSettings.ShowHealRateCD && nextTime > * fotime 
-			? xorstr("heal in ") + std::to_string(nextTime - *fotime) 
+			haxSettings.ShowHealRateCD && nextTime > * fotime
+			? xorstr("heal in ") + std::to_string(nextTime - *fotime)
 			: ""
 		);
 

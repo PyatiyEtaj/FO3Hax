@@ -53,7 +53,7 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX9_Init(g_pd3dDevice);
-		ImGui::SetNextWindowSize(ImVec2(210, 320));
+		//ImGui::SetNextWindowSize(ImVec2(210, 320));
 	}
 
 
@@ -73,6 +73,7 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		_haxSettings->Uninject = true;
 	ImGui::SameLine();
 	ImGui::Text(" You will hear `BEEEEP`");
+	ImGui::End();
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
