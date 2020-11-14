@@ -103,10 +103,13 @@
 
 struct HaxSettings{
 	bool UseSafe1Hex = true;
-	float Colors[4] = {1.0f, 1.0f, 0.0f, 0.0f};
+	float Colors[3] = {1.0f, 1.0f, 0.0f};
 	bool IsMenuOpen = false;
 	bool IsImGuiInit = false;
 	bool ShowHealRateCD = true;
+	int ThreadLatency = 100;
+	int CrossHairMul = 1;
+	bool Uninject = false;
 };
 
 /*

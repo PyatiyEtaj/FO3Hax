@@ -53,7 +53,7 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX9_Init(g_pd3dDevice);
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		ImGui::SetNextWindowSize(ImVec2(210, 320));
 	}
 
 
@@ -65,16 +65,20 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 	ImGui::Text("# Attack only from 1 hex (Hold Shift)\n# Healing Rate CD\n# Fast reload (Shift + F5)");
 	ImGui::Checkbox("Use safe 1 hex", &_haxSettings->UseSafe1Hex);
 	ImGui::Checkbox("Show heal rate cd", &_haxSettings->ShowHealRateCD);
-	ImGui::ColorEdit4("CH colors", _haxSettings->Colors);
-
-
+	ImGui::ColorEdit3("CH colors", _haxSettings->Colors);
+	ImGui::SliderInt("CH mult", &_haxSettings->CrossHairMul, 1, 5);
+	ImGui::SliderInt("Thread latency", &_haxSettings->ThreadLatency, 30, 120);
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+	if (ImGui::Button("Uninject"))
+		_haxSettings->Uninject = true;
+	ImGui::SameLine();
+	ImGui::Text(" You will hear `BEEEEP`");
 	ImGui::EndFrame();
 	ImGui::Render();
-
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 }
 
-#define FLOATS_TO_COLOR(colors) D3DCOLOR_ARGB(int(colors[3]*255), int(colors[0] * 255), int(colors[1] * 255), int(colors[2] * 255))
+#define FLOATS_TO_COLOR(colors) D3DCOLOR_ARGB(255, int(colors[0] * 255), int(colors[1] * 255), int(colors[2] * 255))
 
 HRESULT __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDev)
 {
@@ -92,8 +96,8 @@ HRESULT __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDev)
 
 		if (_haxSettings->UseSafe1Hex)
 		{
-			D3DRECT rec1 = { *xPos, *yPos-7, *xPos + 1,  *yPos +6 };
-			D3DRECT rec2 = { *xPos-6, *yPos-1, *xPos+7, *yPos };
+			D3DRECT rec1 = { *xPos, *yPos-7*_haxSettings->CrossHairMul, *xPos + 1 * _haxSettings->CrossHairMul,  *yPos +6 * _haxSettings->CrossHairMul };
+			D3DRECT rec2 = { *xPos-6 * _haxSettings->CrossHairMul, *yPos-1 * _haxSettings->CrossHairMul, *xPos+7 * _haxSettings->CrossHairMul, *yPos };
 			DWORD color = FLOATS_TO_COLOR(_haxSettings->Colors);
 			pDev->Clear(1, &rec1, D3DCLEAR_TARGET, color, 0, 0);
 			pDev->Clear(1, &rec2, D3DCLEAR_TARGET, color, 0, 0);

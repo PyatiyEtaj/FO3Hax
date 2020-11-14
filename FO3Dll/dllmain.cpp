@@ -48,7 +48,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 		vk_end = GetAsyncKeyState(VK_END) != 0;
 		//pathFinder->NeedMove = (GetKeyState(VK_CAPITAL) & 1) == 0;
 
-		if (shift && vk_f1) {
+		if (GetAsyncKeyState(VK_INSERT)) {
 			haxSettings.IsMenuOpen = !haxSettings.IsMenuOpen;
 		}
 
@@ -56,7 +56,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 			RefreshMe(foclient);
 		}		
 
-		if (shift && vk_end)
+		if (haxSettings.Uninject)
 		{
 			Beep(200, 200);
 			terminateOneHexThread = true;
@@ -79,7 +79,7 @@ DWORD CALLBACK MainThread(LPVOID args)
 			: ""
 		);
 
-		Sleep(100);
+		Sleep(haxSettings.ThreadLatency);
 	}
 	ExitThread(0);
 }
