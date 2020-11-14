@@ -6,6 +6,7 @@ Main features:
 * Attack only from 1 hex (*safe version*)
 * Healing Rate CD 
 * Fast reload
+* `Insert` - open/close gui
 
 Meaning:
 
