@@ -8,6 +8,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
+#include "Packets.h"
 #include "Logger.h"
 //#pragma comment(lib, "d3d9")
 //#pragma comment(lib, "d3dx9")
@@ -33,13 +34,13 @@ void Init() {
 	yPos = (int*)GET_ADR(GLOBAL_MOUSE_Y);
 }
 
-HaxSettings* _haxSettings;
+extern HaxSettings g_HaxSettings;
 
 void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 {
-	if (!_haxSettings->IsImGuiInit)
+	if (!g_HaxSettings.IsImGuiInit)
 	{
-		_haxSettings->IsImGuiInit = true;
+		g_HaxSettings.IsImGuiInit = true;
 		D3DDEVICE_CREATION_PARAMETERS CP;
 		auto window = FindWindowA(NULL, FO3_NAME);
 		g_pd3dDevice->GetCreationParameters(&CP);
@@ -61,31 +62,36 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 
 	ImGui::Separator();
 	ImGui::Text("# Attack only from 1 hex (Hold Shift)");
-	ImGui::Checkbox("Use safe 1 hex", &_haxSettings->UseSafe1Hex);
-	ImGui::Checkbox("Show heal rate cd", &_haxSettings->ShowHealRateCD);
+	ImGui::Checkbox("Use safe 1 hex", &g_HaxSettings.UseSafe1Hex);
+	ImGui::Checkbox("Show heal rate cd", &g_HaxSettings.ShowHealRateCD);
 #ifndef RELEASE
-	ImGui::Checkbox("Disable orig WndProc", &_haxSettings->DisableWndProc);
+	ImGui::Checkbox("Disable orig WndProc", &g_HaxSettings.DisableWndProc);
 #endif // !RELEASE
 	if (ImGui::Button("Refresh"))
-		_haxSettings->NeedRefresh = true;
+		g_HaxSettings.NeedRefresh = true;
 #ifndef RELEASE
 	ImGui::SameLine();
 	if (ImGui::Button("Open menu Packets"))
-		_haxSettings->OpenPackets = true;
+		g_HaxSettings.OpenPackets = true;
+	ImGui::SameLine();
+	if (ImGui::Button("Log"))
+		g_HaxSettings.OpenLog = true;
 #endif // !RELEASE
 	ImGui::Dummy(ImVec2(0.0f, 4.0f));
-	ImGui::ColorEdit3("CH colors", _haxSettings->Colors);
-	ImGui::SliderInt("CH mult", &_haxSettings->CrossHairMul, 1, 5);
-	ImGui::SliderInt("Thread latency", &_haxSettings->ThreadLatency, 30, 120);
+	ImGui::ColorEdit3("CH colors", g_HaxSettings.Colors);
+	ImGui::SliderInt("CH mult", &g_HaxSettings.CrossHairMul, 1, 5);
+	ImGui::SliderInt("Thread latency", &g_HaxSettings.ThreadLatency, 30, 120);
 	ImGui::Dummy(ImVec2(0.0f, 4.0f));
 	ImGui::Separator();
 	if (ImGui::Button("Uninject"))
-		_haxSettings->Uninject = true;
+		g_HaxSettings.Uninject = true;
 	ImGui::SameLine();
 	ImGui::Text(" You will hear `BEEEEP`");
 #ifndef RELEASE
-	if (_haxSettings->OpenPackets)
-		Logger::Draw("Packets", _haxSettings);
+	if (g_HaxSettings.OpenPackets)
+		Packets::Draw("Packets");
+	if (g_HaxSettings.OpenLog)
+		Logger::Draw("Log");
 #endif
 	//ImGui::ShowDemoWindow();
 	ImGui::End();
@@ -100,32 +106,32 @@ HRESULT __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDev)
 {
 	typedef HRESULT(__stdcall* es)(LPDIRECT3DDEVICE9);
 	es f = es(hsES->OriginalOps);
-	if (_haxSettings) {
-		if (_haxSettings->IsMenuOpen)
-			ImGuiLoop(pDev);
-		SetCursor(_haxSettings->IsMenuOpen ? LoadCursor(NULL, IDC_ARROW) : NULL);
-		if (!xPos && !yPos )
-			Init();
 
-		D3DVIEWPORT9 Viewport;
-		pDev->GetViewport(&Viewport);
+	if (g_HaxSettings.IsMenuOpen)
+		ImGuiLoop(pDev);
+	SetCursor(g_HaxSettings.IsMenuOpen ? LoadCursor(NULL, IDC_ARROW) : NULL);
+	if (!xPos && !yPos)
+		Init();
 
-		if (_haxSettings->UseSafe1Hex)
-		{
-			D3DRECT rec1 = { *xPos, *yPos-7*_haxSettings->CrossHairMul, *xPos + 1 * _haxSettings->CrossHairMul,  *yPos +6 * _haxSettings->CrossHairMul };
-			D3DRECT rec2 = { *xPos-6 * _haxSettings->CrossHairMul, *yPos-1 * _haxSettings->CrossHairMul, *xPos+7 * _haxSettings->CrossHairMul, *yPos };
-			DWORD color = FLOATS_TO_COLOR(_haxSettings->Colors);
-			pDev->Clear(1, &rec1, D3DCLEAR_TARGET, color, 0, 0);
-			pDev->Clear(1, &rec2, D3DCLEAR_TARGET, color, 0, 0);
-		}
+	D3DVIEWPORT9 Viewport;
+	pDev->GetViewport(&Viewport);
 
-		if (!IsTdCreated)
-		{
-			td = CrtD3DTextDrawer(pDev, 50, 300, D3DCOLOR_ARGB(255, 255, 255, 0), "Consolas", 18);
-			IsTdCreated = true;
-		}
-		xDrawText(td, OutputText.c_str());
+	if (g_HaxSettings.UseSafe1Hex)
+	{
+		D3DRECT rec1 = { *xPos, *yPos - 7 * g_HaxSettings.CrossHairMul, *xPos + 1 * g_HaxSettings.CrossHairMul,  *yPos + 6 * g_HaxSettings.CrossHairMul };
+		D3DRECT rec2 = { *xPos - 6 * g_HaxSettings.CrossHairMul, *yPos - 1 * g_HaxSettings.CrossHairMul, *xPos + 7 * g_HaxSettings.CrossHairMul, *yPos };
+		DWORD color = FLOATS_TO_COLOR(g_HaxSettings.Colors);
+		pDev->Clear(1, &rec1, D3DCLEAR_TARGET, color, 0, 0);
+		pDev->Clear(1, &rec2, D3DCLEAR_TARGET, color, 0, 0);
 	}
+
+	if (!IsTdCreated)
+	{
+		td = CrtD3DTextDrawer(pDev, 50, 300, D3DCOLOR_ARGB(255, 255, 255, 0), "Consolas", 18);
+		IsTdCreated = true;
+	}
+	xDrawText(td, OutputText.c_str());
+
 	return f(pDev);
 }
 
@@ -144,10 +150,10 @@ void D3D::SetOutputText(const char* str)
 }
 
 
-void D3D::Constructor(LPCSTR wndName, HaxSettings* haxSettings)
+void D3D::Constructor(LPCSTR wndName)
 {
 	typedef LPDIRECT3D9(__stdcall* D3DCreate)(UINT);
-	_haxSettings = haxSettings;
+
 	HMODULE hDLL = GetModuleHandleA(xorstr("d3d9"));
 	if (hDLL == nullptr) { printf_s(xorstr("Can't find module d3d9.dll\nAbort...\n")); return; }
 	D3DCreate pDirect3DCreate9 = (D3DCreate)GetProcAddress(hDLL, xorstr("Direct3DCreate9"));

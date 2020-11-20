@@ -4,6 +4,6 @@
 #include "utils.h"
 
 namespace PacketsAnal {	
-	void SetInlineHook(HaxSettings* haxSettings);
+	void SetInlineHook();
 	void Unset();
 }

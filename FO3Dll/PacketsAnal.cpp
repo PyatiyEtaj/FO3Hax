@@ -1,11 +1,10 @@
 #include "PacketsAnal.h"
 #include <ws2def.h>
 #include <WinSock2.h>
-#include "Logger.h"
+#include "Packets.h"
 #define STACKPOS__COUNT_OF_BUFS 2
 
-HaxSettings* _haxSettingsPackets;
-
+extern HaxSettings g_HaxSettings;
 HookSetter* hs_send = nullptr;
 LPWSABUF _buffer = nullptr;
 PDWORD _stack = nullptr;
@@ -17,13 +16,13 @@ void hkWSASend() {
 		mov dword ptr ds : [_stack], esp
 	}
 
-	if (_buffer != nullptr && _haxSettingsPackets->StartOutPackets)
+	if (_buffer != nullptr && g_HaxSettings.StartOutPackets)
 	{
-		Logger::AddOut("[SEND] count=%d adr=%p | adr_buf=%p | len=%d\n",
+		Packets::AddOut("[SEND] count=%d adr=%p | adr_buf=%p | len=%d\n",
 			_stack[STACKPOS__COUNT_OF_BUFS], &_buffer->buf, _buffer->buf, _buffer[0].len
 		);
 		//__printer((PBYTE)_buffer[0].buf, _buffer[0].len);
-		Logger::AddOut("===========================[WSASendEnd]======================\n\n");
+		Packets::AddOut("===========================[WSASendEnd]======================\n\n");
 	}
 
 
@@ -35,8 +34,8 @@ void hkWSASend() {
 bool* _inputP = nullptr;
 HookSetter* hs_netprocess = nullptr;
 void hkNetProcess() {
-	if (_haxSettingsPackets->StartInPackets)
-		Logger::AddIn("*************************************************************\n");
+	if (g_HaxSettings.StartInPackets)
+		Packets::AddIn("*************************************************************\n");
 	typedef  void(*fTmp)();
 	fTmp __exit = fTmp(hs_netprocess->OriginalOps);
 	__exit();
@@ -44,16 +43,15 @@ void hkNetProcess() {
 
 HookSetter* hs_recv = nullptr;
 void hkWSARecvEnd() {
-	if (_haxSettingsPackets->StartInPackets)
-		Logger::AddIn("\n===========================[WSARecvEnd]======================\n");
+	if (g_HaxSettings.StartInPackets)
+		Packets::AddIn("\n===========================[WSARecvEnd]======================\n");
 	typedef  void(*fTmp)();
 	fTmp __exit = fTmp(hs_recv->OriginalOps);
 	__exit();
 }
 
-void PacketsAnal::SetInlineHook(HaxSettings* haxSettings)
+void PacketsAnal::SetInlineHook()
 {
-	_haxSettingsPackets = haxSettings;
 	hs_netprocess = CrtHookSetter((PBYTE)GET_ADR(FO3_NETPROCESS), (DWORD)hkNetProcess, 6);
 	SetHookSetter(hs_netprocess);
 	hs_recv = CrtHookSetter((PBYTE)GET_ADR(FO3_WSARECVEND), (DWORD)hkWSARecvEnd, 5);

@@ -3,7 +3,7 @@
 
 namespace AnalyzeNetBuffer {
     void SetOutputDebugMessages(bool flag);
-    void InitializationOfAnalyzer(HaxSettings* haxSettings);
+    void InitializationOfAnalyzer();
     void Unset();
     void SendMsg();
 };

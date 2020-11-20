@@ -1,8 +1,8 @@
 #pragma once
-#include "PathFinder.h"
+#include "framework.h"
 
 namespace Scripts {
 	void EnableOneHex(int* shift);
-	HANDLE EnablePathFinding(PathFinder* pathFinder, bool* terminate);
+	HANDLE EnablePathFinding(bool* terminate);
 	void UnsetHooks();
 };

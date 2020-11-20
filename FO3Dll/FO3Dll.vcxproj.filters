@@ -111,6 +111,9 @@
     <ClInclude Include="ImGui\imgui_internal.h">
       <Filter>Файлы заголовков\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Packets.h">
+      <Filter>Файлы заголовков\D3D</Filter>
+    </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Файлы заголовков\D3D</Filter>
     </ClInclude>
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Packets.cpp">
+      <Filter>Исходные файлы\D3D</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Исходные файлы\D3D</Filter>

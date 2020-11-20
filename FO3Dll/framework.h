@@ -39,12 +39,19 @@
 #define NETBUFFER_PUSH_UCHAR 0x461160
 #define NETBUFFER_PUSH_USHORT 0x460F60
 
-#define NETBUFFER_WRITE_UINT 0x460E48
+#define NETBUFFER_WRITE_UINT 0x460DD0
+#define NETBUFFER_WRITE_UINT_DUP 0x460ED0
+#define NETBUFFER_WRITE_USHORT 0x460FD0
+#define NETBUFFER_WRITE_USHORT_DUP 0x4610D0
+#define NETBUFFER_WRITE_BOOL 0x4613D0
+#define NETBUFFER_WRITE_UCHAR 0x4611D0
+
+/*#define NETBUFFER_WRITE_UINT 0x460E48
 #define NETBUFFER_WRITE_UINT_DUP 0x460F48
-#define NETBUFFER_WRITE_BOOL 0x46144D
-#define NETBUFFER_WRITE_UCHAR 0x461246
 #define NETBUFFER_WRITE_USHORT 0x46104B
 #define NETBUFFER_WRITE_USHORT_DUP 0x46114B
+#define NETBUFFER_WRITE_BOOL 0x46144D
+#define NETBUFFER_WRITE_UCHAR 0x461246*/
 
 #define FO3_LOGIN 0x47430C
 
@@ -88,21 +95,22 @@
 #define SHOW_HIGHLIGHT 0x874358
 //---------------------------------------
 
-typedef struct {
-	float Colors[3]		  = { 1.0f, 1.0f, 0.0f };
-	int   ThreadLatency	  = 100;
-	int   CrossHairMul	  = 1;
-	bool  UseSafe1Hex	  = true;
-	bool  ShowHealRateCD  = true;
-	bool  DisableWndProc  = true;
-	bool  IsMenuOpen	  = false;
-	bool  IsImGuiInit	  = false;
-	bool  Uninject		  = false;
-	bool  NeedRefresh     = false;
-	bool  StartInPackets  = false;
+struct HaxSettings {
+	float Colors[3] = { 1.0f, 1.0f, 0.0f };
+	int   ThreadLatency = 100;
+	int   CrossHairMul = 1;
+	bool UseSafe1Hex = true;
+	bool  ShowHealRateCD = true;
+	bool  DisableWndProc = true;
+	bool  IsMenuOpen = false;
+	bool  IsImGuiInit = false;
+	bool  Uninject = false;
+	bool  NeedRefresh = false;
+	bool  StartInPackets = false;
 	bool  StartOutPackets = false;
-	bool  OpenPackets     = false;	
-}HaxSettings;
+	bool  OpenPackets = false;
+	bool  OpenLog = false;
+};
 
 /*
 [out]   uint = [ 3176807594] [0xBD5A3CAA] {call=0x464FA0} // msg

@@ -8,15 +8,15 @@
 #include "PathFinder.h"
 #include "Initialization.h"
 #include "InGameScripts.h"
-#include "Logger.h"
+#include "Packets.h"
 /*#include <CommCtrl.h>
 #pragma comment(lib, "Comctl32")*/
 
-HaxSettings haxSettings;
+HaxSettings g_HaxSettings;
 WNDPROC oWndProc;
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	if (haxSettings.IsImGuiInit && (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) || haxSettings.DisableWndProc))
+	if (g_HaxSettings.IsImGuiInit && (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) || g_HaxSettings.DisableWndProc))
 		return true;
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -31,19 +31,18 @@ DWORD CALLBACK MainThread(LPVOID args)
 	initializator.Await();
 
 	PBYTE foclient = GetFOClient();
-	PathFinder* pathFinder = new PathFinder();
 	Scripts::EnableOneHex(&shift);
-	HANDLE onehexthread = Scripts::EnablePathFinding(pathFinder, &terminateOneHexThread);
+	HANDLE onehexthread = Scripts::EnablePathFinding(&terminateOneHexThread);
 
 	uint nextTime = 0;
 	uint* fotime = (uint*)GET_TIME_PTR;
 	InGameScripts::SetHooks(&nextTime);
 
 	oWndProc = (WNDPROC)SetWindowLongPtr(FindWindowA(NULL, FO3_WND), GWL_WNDPROC, (LONG_PTR)&WndProc);
-	D3D::Constructor(FO3_WND, &haxSettings);
+	D3D::Constructor(FO3_WND);
 #ifndef RELEASE
-	AnalyzeNetBuffer::InitializationOfAnalyzer(&haxSettings);
-	PacketsAnal::SetInlineHook(&haxSettings);
+	AnalyzeNetBuffer::InitializationOfAnalyzer();
+	PacketsAnal::SetInlineHook();
 #endif
 
 	while (true)
@@ -53,17 +52,17 @@ DWORD CALLBACK MainThread(LPVOID args)
 		vk_f1 = GetAsyncKeyState(VK_F1) != 0;
 		vk_end = GetAsyncKeyState(VK_END) != 0;
 
-		if ((GetKeyState(VK_INSERT) & 0x1) == haxSettings.IsMenuOpen) {
-			haxSettings.IsMenuOpen = !haxSettings.IsMenuOpen;
-			haxSettings.DisableWndProc = haxSettings.IsMenuOpen;
+		if ((GetKeyState(VK_INSERT) & 0x1) == g_HaxSettings.IsMenuOpen) {
+			g_HaxSettings.IsMenuOpen = !g_HaxSettings.IsMenuOpen;
+			g_HaxSettings.DisableWndProc = g_HaxSettings.IsMenuOpen;
 		}
 
-		if (haxSettings.NeedRefresh) {
-			haxSettings.NeedRefresh = false;
+		if (g_HaxSettings.NeedRefresh) {
+			g_HaxSettings.NeedRefresh = false;
 			RefreshMe(foclient);
 		}		
 
-		if (haxSettings.Uninject)
+		if (g_HaxSettings.Uninject)
 		{
 			Beep(200, 200);
 			terminateOneHexThread = true;
@@ -80,17 +79,16 @@ DWORD CALLBACK MainThread(LPVOID args)
 #ifdef CONSOLE
 			ForDebug::FreeCons();
 #endif
-			delete pathFinder;
 			break;
 		}
 
 		D3D::SetOutputText(
-			haxSettings.ShowHealRateCD && nextTime > * fotime
+			g_HaxSettings.ShowHealRateCD && nextTime > * fotime
 			? xorstr("heal in ") + std::to_string(nextTime - *fotime)
 			: ""
 		);
 
-		Sleep(haxSettings.ThreadLatency);
+		Sleep(g_HaxSettings.ThreadLatency);
 	}
 	ExitThread(0);
 }
@@ -201,11 +199,7 @@ LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 	isActivated = true;
 	if (GetModuleHandleA(FO3_NAME))
 	{
-#ifdef RELEASE
 		CreateThread(0, 0, MainThread, 0, 0, 0);
-#else
-		//CreateThread(0, 0, DebugThread, 0, 0, 0);
-#endif
 	}
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

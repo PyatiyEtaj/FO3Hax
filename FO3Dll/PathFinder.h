@@ -2,7 +2,7 @@
 #include "FO3Funcs.h"
 
 class PathFinder {
-private: // InnerStruct
+private:
 	struct ActionStruct {
 		union {
 			uchar firstBytes[4];
@@ -16,7 +16,7 @@ private: // InnerStruct
 		}
 	};
 public:
-	bool NeedMove = false;
+	bool NeedMove = true;
 	bool IsAttack = false;
 	uchar* Target = nullptr;
 	bool IsInited = false;

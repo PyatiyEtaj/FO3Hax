@@ -4,9 +4,9 @@
 #include "HookSetter.h"
 #include "D3D.h"
 #include "FO3Funcs.h"
-#include "Logger.h"
+#include "Packets.h"
 
-HaxSettings* _haxSettingsAnalyze;
+extern HaxSettings g_HaxSettings;
 
 HookSetter* hs_out_uint;
 HookSetter* hs_out_uchar;
@@ -19,19 +19,15 @@ HookSetter* hs_in_uchar;
 HookSetter* hs_in_ushort;
 HookSetter* hs_in_ushort_dup;
 
-DWORD* _foTime = nullptr;
-
-#define SHOW_CHAR 0
-#define SHOW_INT 1
-#define SHOW_SHORT 2
-
-#define SHOW_IN_CHAR 3
-#define SHOW_IN_INT 4
-#define SHOW_IN_BOOL 5
-#define SHOW_IN_SHORT 6
-
-bool* Output = nullptr;
-bool* Input = nullptr;
+enum class ShowType {
+    OutChar,
+    OutInt,
+    OutShort,
+    InChar,
+    InInt,
+    InBool,
+    InShort
+};
 
 const char* MessageType(uchar msg) {
     switch (msg)
@@ -116,180 +112,86 @@ const char* MessageType(uchar msg) {
     return "unknown";
 }
 
-inline void _cdecl IsMessage(DWORD value, const char* type) {
+inline void _cdecl IsMessage(DWORD ret, DWORD value, const char* type) {
     uchar msg = (value & 0x0000FF00) >> 8;
     (value & 0xFFFF00FF) == 0xBD5A00AA
-        ? Logger::AddIn("[%s]    uint = [%11u] [0x%8X] [%s]\n", type, msg, msg, MessageType(msg))
-        : Logger::AddIn("[%s]    uint = [%11u] [0x%8X] [%d]\n", type, uint(value), uint(value), value - *_foTime);
+        ? Packets::AddIn("[%s]    uint = [%11u] [0x%8X] [%s] {call=0x%6X}\n", type, msg, msg, MessageType(msg), ret)
+        : Packets::AddIn("[%s]    uint = [%11u] [0x%8X] {call=0x%6X}\n", type, uint(value), uint(value), ret);
 }
 
-void _cdecl Show(DWORD ret, DWORD value, int type) {
+void _cdecl Show(DWORD ret, DWORD value, ShowType type) {
     switch (type)
     {
-    case SHOW_CHAR:
-        if (_haxSettingsAnalyze->StartOutPackets)
-            Logger::AddOut("[out]  uchar = [%11u] [0x%8X] {call=0x%6X}\n", uchar(value), uchar(value), ret);
+    case ShowType::OutChar:
+        if (g_HaxSettings.StartOutPackets)
+            Packets::AddOut("[out]  uchar = [%11u] [0x%8X] {call=0x%6X}\n", uchar(value), uchar(value), ret);
         break;
-    case SHOW_INT:        
-        if (_haxSettingsAnalyze->StartOutPackets)
-            Logger::AddOut("[out]   uint = [%11u] [0x%8X] {call=0x%6X}\n", uint(value), uint(value), ret);
+    case ShowType::OutInt:
+        if (g_HaxSettings.StartOutPackets)
+            Packets::AddOut("[out]   uint = [%11u] [0x%8X] {call=0x%6X}\n", uint(value), uint(value), ret);
         break;
-    case SHOW_SHORT:
-        if (_haxSettingsAnalyze->StartOutPackets)
-            Logger::AddOut("[out] ushort = [%11u] [0x%8X] {call=0x%6X}\n", ushort(value), ushort(value), ret);
+    case ShowType::OutShort:
+        if (g_HaxSettings.StartOutPackets)
+            Packets::AddOut("[out] ushort = [%11u] [0x%8X] {call=0x%6X}\n", ushort(value), ushort(value), ret);
         break;
 
-    case SHOW_IN_CHAR:
-        if (_haxSettingsAnalyze->StartInPackets)
-            Logger::AddIn("[in]   uchar = [%11u] [0x%8X]\n", uchar(value), uchar(value));
+    case ShowType::InChar:
+        if (g_HaxSettings.StartInPackets)
+            Packets::AddIn("[in]   uchar = [%11u] [0x%8X] {call=0x%6X}\n", uchar(value), uchar(value), ret);
         break;
-    case SHOW_IN_BOOL:
-        if (_haxSettingsAnalyze->StartInPackets)
-            Logger::AddIn("[in]    bool = [%11u] [0x%8X]\n", bool(value), bool(value));
+    case ShowType::InBool:
+        if (g_HaxSettings.StartInPackets)
+            Packets::AddIn("[in]    bool = [%11u] [0x%8X] {call=0x%6X}\n", bool(value), bool(value), ret);
         break;
-    case SHOW_IN_INT:
-        if (_haxSettingsAnalyze->StartInPackets)
-            IsMessage(value, "in");
+    case ShowType::InInt:
+        if (g_HaxSettings.StartInPackets)
+            IsMessage(ret, value, "in");
         break;
-    case SHOW_IN_SHORT:
-        if (_haxSettingsAnalyze->StartInPackets)
-            Logger::AddIn("[in]  ushort = [%11u] [0x%8X]\n", ushort(value), ushort(value));
+    case ShowType::InShort:
+        if (g_HaxSettings.StartInPackets)
+            Packets::AddIn("[in]  ushort = [%11u] [0x%8X] {call=0x%6X}\n", ushort(value), ushort(value), ret);
         break;
     }
 }
 
-DWORD* __fastcall hkPushUint(DWORD* this_, PASS_ARG, uint val) {
-    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uint);
-    DWORD retAdr;
-    _asm {
-        mov eax, [ebp+4]
-        mov [retAdr], eax
-    }
-    Show(retAdr, val, SHOW_INT);
-    orig ret = orig(hs_out_uint->OriginalOps);
-    return ret(this_, 0, val);
+
+#define TEMPLATE_PUSH(name, valuetype, showtype, hs)  \
+DWORD* __fastcall name(DWORD* this_, PASS_ARG, valuetype val) {  \
+        typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, valuetype);\
+        DWORD retAdr;\
+        _asm { mov eax, [ebp + 4]} \
+        _asm {mov[retAdr], eax} \
+        Show(retAdr, val, showtype);\
+        orig ret = orig(hs->OriginalOps);\
+        return ret(this_, 0, val);\
 }
 
-DWORD* __fastcall hkPushChar(DWORD* this_, PASS_ARG, uchar val) {
-    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uchar);
-    DWORD retAdr;
-    _asm {
-        mov eax, [ebp + 4]
-        mov[retAdr], eax
-    }
-    Show(retAdr, val, SHOW_CHAR);
-    orig ret = orig(hs_out_uchar->OriginalOps);
-    return ret(this_, 0, val);
+TEMPLATE_PUSH(hkPushUint, uint, ShowType::OutInt, hs_out_uint)
+TEMPLATE_PUSH(hkPushChar, uchar, ShowType::OutChar, hs_out_uchar)
+TEMPLATE_PUSH(hkPushUshort, ushort, ShowType::OutShort, hs_out_ushort)
+#undef TEMPLATE_PUSH
+
+#define TEMPLATE_POP(name, valuetype, showtype, hs)  \
+DWORD* __fastcall name(DWORD* this_, PASS_ARG, valuetype* val) {  \
+        typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, valuetype*);\
+        DWORD retAdr;\
+        _asm { mov eax, [ebp + 4]} \
+        _asm {mov[retAdr], eax} \
+        orig ret = orig(hs->OriginalOps);\
+        auto res = ret(this_, 0, val);\
+        Show(retAdr, *val, showtype); \
+        return res;\
 }
 
-DWORD* __fastcall hkPushUshort(DWORD* this_, PASS_ARG, ushort val) {
-    typedef DWORD* (__fastcall* orig)(DWORD*, PASS_ARG, uint);
-    DWORD retAdr;
-    _asm {
-        mov eax, [ebp + 4]
-        mov[retAdr], eax
-    }
-    Show(retAdr, val, SHOW_SHORT);
-    orig ret = orig(hs_out_ushort->OriginalOps);
-    return ret(this_, 0, val);
-}
+TEMPLATE_POP(hkWriteUint, uint, ShowType::InInt, hs_in_uint)
+TEMPLATE_POP(hkWriteUintDup, uint, ShowType::InInt, hs_in_uint_dup)
+TEMPLATE_POP(hkWriteBool, bool, ShowType::InBool, hs_in_bool)
+TEMPLATE_POP(hkWriteChar, uchar, ShowType::InChar, hs_in_uchar)
+TEMPLATE_POP(hkWriteUshort, ushort, ShowType::InShort, hs_in_ushort)
+TEMPLATE_POP(hkWriteUshortDup, ushort, ShowType::InShort, hs_in_ushort_dup)
+#undef TEMPLATE_POP
 
-void __stdcall hkWriteUint() {
-    _asm {
-        push SHOW_IN_INT
-        push[eax]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_uint)
-}
-
-void __stdcall hkWriteBool() {
-    _asm {
-        push SHOW_IN_BOOL
-        push[edx]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_bool)
-}
-
-void __stdcall hkWriteUint_dup() {
-    _asm {
-        push SHOW_IN_INT
-        push[eax]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_uint_dup)
-}
-
-void __stdcall hkWriteChar() {
-    _asm {
-        push SHOW_IN_CHAR
-        push[eax]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_uchar)
-}
-
-void __stdcall hkWriteUshort() {
-    _asm {
-        push SHOW_IN_SHORT
-        push[eax]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_ushort)
-}
-
-void __stdcall hkWriteUshortDup() {
-    _asm {
-        push SHOW_IN_SHORT
-        push[eax]
-        mov eax, [ebp + 4]
-        push eax
-        call Show
-        add esp, 4 * 3
-    }
-    JMP(hs_in_ushort)
-}
-
-
-void AnalyzeNetBuffer::InitializationOfAnalyzer(HaxSettings* haxSettings) {
-    _haxSettingsAnalyze = haxSettings;
-    _foTime = GET_TIME_PTR;
-    hs_in_uint = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UINT), (DWORD)hkWriteUint, 5);
-    SetHookSetter(hs_in_uint);
-    hs_in_uint_dup = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UINT_DUP), (DWORD)hkWriteUint_dup, 5);
-    SetHookSetter(hs_in_uint_dup);
-    hs_in_uchar = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UCHAR), (DWORD)hkWriteChar, 6);
-    SetHookSetter(hs_in_uchar);
-    hs_in_ushort = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_USHORT), (DWORD)hkWriteUshort, 5);
-    SetHookSetter(hs_in_ushort);
-    hs_in_ushort_dup = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_USHORT_DUP), (DWORD)hkWriteUshortDup, 5);
-    SetHookSetter(hs_in_ushort_dup);
-    hs_in_bool = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_BOOL), (DWORD)hkWriteBool, 6);
-    SetHookSetter(hs_in_bool);
-
-    hs_out_uint = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_UINT), (DWORD)hkPushUint, 6);
-    SetHookSetter(hs_out_uint);
-    hs_out_uchar = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_UCHAR), (DWORD)hkPushChar, 6);
-    SetHookSetter(hs_out_uchar);
-    hs_out_ushort = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_USHORT), (DWORD)hkPushUshort, 6);
-    SetHookSetter(hs_out_ushort);
-}
+/////////////////////////////////////////////////////////////////////////
 
 void AnalyzeNetBuffer::SetOutputDebugMessages(bool flag)
 {
@@ -303,6 +205,29 @@ void AnalyzeNetBuffer::SetOutputDebugMessages(bool flag)
     //*showDbgNetMsg = flag;
     showDbgNetMsg = (PBYTE)GET_ADR(SHOW_HIGHLIGHT);
     *showDbgNetMsg = flag;
+}
+
+void AnalyzeNetBuffer::InitializationOfAnalyzer()
+{
+    hs_in_uint = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UINT), (DWORD)hkWriteUint, 6);
+    SetHookSetter(hs_in_uint);
+    hs_in_uint_dup = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UINT_DUP), (DWORD)hkWriteUintDup, 6);
+    SetHookSetter(hs_in_uint_dup);
+    hs_in_uchar = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_UCHAR), (DWORD)hkWriteChar, 6);
+    SetHookSetter(hs_in_uchar);
+    hs_in_ushort = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_USHORT), (DWORD)hkWriteUshort, 6);
+    SetHookSetter(hs_in_ushort);
+    hs_in_ushort_dup = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_USHORT_DUP), (DWORD)hkWriteUshortDup, 6);
+    SetHookSetter(hs_in_ushort_dup);
+    hs_in_bool = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_WRITE_BOOL), (DWORD)hkWriteBool, 6);
+    SetHookSetter(hs_in_bool);
+
+    hs_out_uint = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_UINT), (DWORD)hkPushUint, 6);
+    SetHookSetter(hs_out_uint);
+    hs_out_uchar = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_UCHAR), (DWORD)hkPushChar, 6);
+    SetHookSetter(hs_out_uchar);
+    hs_out_ushort = CrtHookSetter((PBYTE)GET_ADR(NETBUFFER_PUSH_USHORT), (DWORD)hkPushUshort, 6);
+    SetHookSetter(hs_out_ushort);
 }
 
 
