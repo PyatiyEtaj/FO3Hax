@@ -134,6 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\..;..;%(AdditionalIncludeDirectories);$(DXSDK_DIR)Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,6 +184,7 @@
     <ClInclude Include="PacketsAnal.h" />
     <ClInclude Include="PacketSender.h" />
     <ClInclude Include="PathFinder.h" />
+    <ClInclude Include="Stats.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="HookSetter.h" />
     <ClInclude Include="ScriptsDLL.h" />
@@ -210,6 +212,7 @@
     <ClCompile Include="PacketSender.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="ScriptsDLL.cpp" />
+    <ClCompile Include="Stats.cpp" />
     <ClCompile Include="TextDrawer.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>

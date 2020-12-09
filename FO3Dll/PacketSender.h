@@ -39,26 +39,32 @@ private:
 	std::string filename_;
 	Batch toSend_;
 	void WhatToDo(const std::string& sendtype, const std::string& body) noexcept;
-	void GetPackets(const std::string& text) noexcept;
 public:
 	PacketSender(const std::string& filename) : filename_(filename){}
 	PacketSender(const char* filename) : filename_(filename) {}
 
-	void Create() noexcept;
+	Batch BatchFromText(const std::string& text) noexcept;
+	Batch Create() noexcept;
 	Batch GetToSend() const noexcept { return toSend_; };
 };
 
 
 class JustSender {
 private:
+	static const int maxLength_ = 65536;
+	char buf_[maxLength_];
 	PBYTE foclient_;
 	void PushUint(uint value) const noexcept;
 	void PushUchar(uchar value)  const noexcept;
 	void PushUshort(ushort value)  const noexcept;
 	void SendByOne(const std::vector<ToSend>& toSend) const noexcept;
 public:
-	JustSender() {
+	void Init() { 
+		std::string tmp = "[out]{\n\tint = 0xBD5A6DAA;\n\tchar = 0x1;\n\tshort = 0x1;\n}";
+		memcpy(buf_, tmp.c_str(), tmp.size());
 		foclient_ = (PBYTE)(*(PDWORD)GET_ADR(FO_CLIENT_ADR));
 	}
-	void Send(const std::string& filename = "packets.txt");
+	void SendFromFile(const std::string& filename = "packets.txt") const noexcept;
+	void SendFromText(const std::string& text) const noexcept;
+	void Draw() const noexcept;
 };

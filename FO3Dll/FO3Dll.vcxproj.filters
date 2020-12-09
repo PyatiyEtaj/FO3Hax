@@ -117,6 +117,9 @@
     <ClInclude Include="Logger.h">
       <Filter>Файлы заголовков\D3D</Filter>
     </ClInclude>
+    <ClInclude Include="Stats.h">
+      <Filter>Файлы заголовков\InGameScripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Исходные файлы\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Stats.cpp">
+      <Filter>Исходные файлы\InGameScripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

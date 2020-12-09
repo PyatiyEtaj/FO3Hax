@@ -1,4 +1,6 @@
 #include "PacketSender.h"
+#include "ImGui/imgui.h"
+#include "Logger.h"
 #include <fstream>
 #include <regex>
 #include <iostream>
@@ -65,15 +67,15 @@ std::vector<ToSend> CreatePackets(const std::string& body) {
 				ToSend ts;
 				if (data[0] == "int") {
 					ts.Sendtype = SendType::Int;
-					ts.Int = unsigned int(ToUint(data[1]));
+					ts.Int = (unsigned int)(ToUint(data[1]));
 				}
 				else if (data[0] == "short") {
 					ts.Sendtype = SendType::Short;
-					ts.Short = unsigned short(ToUint(data[1]));
+					ts.Short = (unsigned short)(ToUint(data[1]));
 				}
 				else{
 					ts.Sendtype = SendType::Char;
-					ts.Char = unsigned char(ToUint(data[1]));
+					ts.Char = (unsigned char)(ToUint(data[1]));
 				}
 				tosend.push_back(ts);
 			}
@@ -92,7 +94,7 @@ void PacketSender::WhatToDo(const std::string& sendtype, const std::string& body
 	toSend_.push_back(CreatePackets(body));
 }
 
-void PacketSender::GetPackets(const std::string &text) noexcept {
+PacketSender::Batch PacketSender::BatchFromText(const std::string &text) noexcept {
 	std::regex re(xorstr("\\[(\\w+)\\]\\{(\[^\\}\]*)\\}"),
 		std::regex_constants::ECMAScript | std::regex_constants::icase);
 	auto words_begin =
@@ -104,12 +106,13 @@ void PacketSender::GetPackets(const std::string &text) noexcept {
 		std::string match_str = match[2].str();
 		WhatToDo(match[1].str(), match[2].str());
 	}
+	return toSend_;
 }
 
-void PacketSender::Create() noexcept
+PacketSender::Batch PacketSender::Create() noexcept
 {
 	auto text = ReadToEnd(filename_);
-	return GetPackets(text);
+	return BatchFromText(text);
 }
 
 void JustSender::SendByOne(const std::vector<ToSend>& toSend) const noexcept
@@ -139,14 +142,32 @@ void JustSender::PushUshort(ushort value)  const noexcept {
 		NetBufferPushUshort(foclient_, value);
 }
 
-void JustSender::Send(const std::string& filename)
+void JustSender::SendFromFile(const std::string& filename) const noexcept
 {
 	PacketSender ps("packets.txt");
 	ps.Create();
 	for (auto batch : ps.GetToSend()) {
-		/*for (auto packet : batch)
-			std::cout << packet.ToString() << std::endl;
-		std::cout << std::endl;*/
 		SendByOne(batch);
 	}
+}
+
+void JustSender::SendFromText(const std::string& text) const noexcept
+{
+	PacketSender ps("null");	
+	for (auto batch : ps.BatchFromText(text)) {
+		SendByOne(batch);
+	}
+}
+
+extern HaxSettings g_HaxSettings;
+
+void JustSender::Draw() const noexcept
+{
+	if (ImGui::Begin("Sender", &g_HaxSettings.OpenSendPackets)) {
+		auto size = ImGui::GetWindowSize();
+		if (ImGui::Button("Send"))
+			SendFromText(buf_);
+		ImGui::InputTextMultiline("", const_cast<char*>(buf_), maxLength_, ImVec2(size.x - 15, size.y - 100), ImGuiInputTextFlags_AllowTabInput);
+	}
+	ImGui::End();
 }

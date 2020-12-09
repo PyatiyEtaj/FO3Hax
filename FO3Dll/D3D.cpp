@@ -10,21 +10,22 @@
 #include <tchar.h>
 #include "Packets.h"
 #include "Logger.h"
+#include "PacketSender.h"
+#include "Stats.h"
 //#pragma comment(lib, "d3d9")
 //#pragma comment(lib, "d3dx9")
 
 
 bool IsCreated = false;
-bool IsTdCreated = false;
 HookSetter* hsDIP;
 HookSetter* hsES;
 int origES = 0;
-D3DTextDrawer* td;
+D3DText::D3DTextDrawer* td = nullptr;
 const DWORD _endScene = 42;
 const DWORD _drawIndexedPrimitive = 82;
 const DWORD _reset = 16;
+JustSender _sender;
 std::string OutputText = "";
-
 int* xPos = 0;
 int* yPos = 0;
 
@@ -42,9 +43,9 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 	{
 		g_HaxSettings.IsImGuiInit = true;
 		D3DDEVICE_CREATION_PARAMETERS CP;
-		auto window = FindWindowA(NULL, FO3_NAME);
+		//auto window = FindWindowA(NULL, FO3_NAME);
 		g_pd3dDevice->GetCreationParameters(&CP);
-		window = CP.hFocusWindow;
+		auto window = CP.hFocusWindow;
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -53,7 +54,12 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		ImGui::StyleColorsClassic();
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX9_Init(g_pd3dDevice);
+		_sender.Init();
 	}
+
+
+	D3DVIEWPORT9 Viewport;
+	g_pd3dDevice->GetViewport(&Viewport);
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -66,7 +72,7 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 	ImGui::Checkbox("Show heal rate cd", &g_HaxSettings.ShowHealRateCD);
 #ifndef RELEASE
 	ImGui::Checkbox("Disable orig WndProc", &g_HaxSettings.DisableWndProc);
-#endif // !RELEASE
+#endif
 	if (ImGui::Button("Refresh"))
 		g_HaxSettings.NeedRefresh = true;
 #ifndef RELEASE
@@ -76,10 +82,21 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 	ImGui::SameLine();
 	if (ImGui::Button("Log"))
 		g_HaxSettings.OpenLog = true;
-#endif // !RELEASE
+	ImGui::SameLine();
+	if (ImGui::Button("Send Packets"))
+		g_HaxSettings.OpenSendPackets = true;
+#endif
 	ImGui::Dummy(ImVec2(0.0f, 4.0f));
 	ImGui::ColorEdit3("CH colors", g_HaxSettings.Colors);
 	ImGui::SliderInt("CH mult", &g_HaxSettings.CrossHairMul, 1, 5);
+	ImGui::SliderInt("InfoPosX", &g_HaxSettings.TextPosX, 1, Viewport.Width - 100);
+	ImGui::SliderInt("InfoPosY", &g_HaxSettings.TextPosY, 1, Viewport.Height - 100);
+	int fontSize = g_HaxSettings.FontSize;
+	ImGui::SliderInt("FontSize", &fontSize, 6, 32);
+	if (fontSize != g_HaxSettings.FontSize)
+		td = D3DText::CrtD3DTextDrawer(g_pd3dDevice, g_HaxSettings.TextPosX, g_HaxSettings.TextPosY, D3DCOLOR_ARGB(255, 255, 255, 0), "Consolas", g_HaxSettings.FontSize);
+	g_HaxSettings.FontSize = fontSize;
+
 	ImGui::SliderInt("Thread latency", &g_HaxSettings.ThreadLatency, 30, 120);
 	ImGui::Dummy(ImVec2(0.0f, 4.0f));
 	ImGui::Separator();
@@ -92,6 +109,8 @@ void ImGuiLoop(LPDIRECT3DDEVICE9 g_pd3dDevice)
 		Packets::Draw("Packets");
 	if (g_HaxSettings.OpenLog)
 		Logger::Draw("Log");
+	if (g_HaxSettings.OpenSendPackets)
+		_sender.Draw();
 #endif
 	//ImGui::ShowDemoWindow();
 	ImGui::End();
@@ -113,9 +132,6 @@ HRESULT __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDev)
 	if (!xPos && !yPos)
 		Init();
 
-	D3DVIEWPORT9 Viewport;
-	pDev->GetViewport(&Viewport);
-
 	if (g_HaxSettings.UseSafe1Hex)
 	{
 		D3DRECT rec1 = { *xPos, *yPos - 7 * g_HaxSettings.CrossHairMul, *xPos + 1 * g_HaxSettings.CrossHairMul,  *yPos + 6 * g_HaxSettings.CrossHairMul };
@@ -125,12 +141,12 @@ HRESULT __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDev)
 		pDev->Clear(1, &rec2, D3DCLEAR_TARGET, color, 0, 0);
 	}
 
-	if (!IsTdCreated)
-	{
-		td = CrtD3DTextDrawer(pDev, 50, 300, D3DCOLOR_ARGB(255, 255, 255, 0), "Consolas", 18);
-		IsTdCreated = true;
+	if (td == nullptr) {
+		td = D3DText::CrtD3DTextDrawer(pDev, g_HaxSettings.TextPosX, g_HaxSettings.TextPosY, D3DCOLOR_ARGB(255, 255, 255, 0), "Consolas", g_HaxSettings.FontSize);
+	} else {
+		D3DText::ChangeRect(td, g_HaxSettings.TextPosX, g_HaxSettings.TextPosY);
+		D3DText::xDrawText(td, OutputText.c_str());
 	}
-	xDrawText(td, OutputText.c_str());
 
 	return f(pDev);
 }

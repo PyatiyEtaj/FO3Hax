@@ -20,9 +20,9 @@
 //#define CONSOLE
 
 #define PASS_ARG void*
-#define uint unsigned int
-#define uchar unsigned char
-#define ushort unsigned short
+using uint = unsigned int;
+using uchar = unsigned char;
+using ushort = unsigned short;
 
 #define USHORT_MAX 65535
 
@@ -31,6 +31,7 @@
 #define FO3_WND xorstr("FOnline 3")
 #define CACHE_SCRIPTS xorstr("scripts.client_parameters.dll")
 
+#define GET_CHOSEN(foclient) ((uchar**)((PDWORD)foclient + 12540))
 #define GET_ADR(adr) ((DWORD)GetModuleHandleA(FO3_NAME) + adr - 0x400000)
 #define GET_ADR_CACHE(adr) ((DWORD)GetModuleHandleA(CACHE_SCRIPTS) + adr - 0x10000000)
 #define GET_ADR_PURE(adr) ((DWORD)GetModuleHandleA(FO3_NAME) + adr)
@@ -99,7 +100,7 @@ struct HaxSettings {
 	float Colors[3] = { 1.0f, 1.0f, 0.0f };
 	int   ThreadLatency = 100;
 	int   CrossHairMul = 1;
-	bool UseSafe1Hex = true;
+	bool  UseSafe1Hex = true;
 	bool  ShowHealRateCD = true;
 	bool  DisableWndProc = true;
 	bool  IsMenuOpen = false;
@@ -110,16 +111,8 @@ struct HaxSettings {
 	bool  StartOutPackets = false;
 	bool  OpenPackets = false;
 	bool  OpenLog = false;
+	bool  OpenSendPackets = false;
+	int   TextPosX = 50;
+	int   TextPosY = 300;
+	int   FontSize = 18;
 };
-
-/*
-[out]   uint = [ 3176807594] [0xBD5A3CAA] {call=0x464FA0} // msg
-[out]   uint = [         12] [0x       C] {call=0x464FB2} // length of packets
-[out] ushort = [          0] [0x       0] {call=0x464FBA} // count of up skills
-* -- skill number
-* -- count of sp
-[out] ushort = [        457] [0x     1C9] {call=0x465045} // choosen perk
-[SEND] count=1 adr=00199538 | adr_buf=04FDE680 | len=12
-51 1 5A BD FB CF 0 0 A7 FF 36 73
-===========================[WSASendEnd]======================
-*/

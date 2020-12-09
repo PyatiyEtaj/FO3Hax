@@ -4,14 +4,19 @@
 #pragma comment(lib, "d3d9")
 #pragma comment(lib, "d3dx9")
 
-typedef struct
-{
-	LPD3DXFONT D3D_Font;
-	RECT Rect;
-	D3DCOLOR Color;
-	int Size;
-}D3DTextDrawer;
+namespace D3DText {
+	typedef struct
+	{
+		LPD3DXFONT D3D_Font;
+		RECT Rect;
+		D3DCOLOR Color;
+		int Size;
+	}D3DTextDrawer;
 
-D3DTextDrawer* CrtD3DTextDrawer(LPDIRECT3DDEVICE9 pDev, int x, int y, D3DCOLOR color, LPCSTR fontName, int Size = 8);
+	void ChangeRect(D3DTextDrawer* td, int x, int y);
 
-void xDrawText(D3DTextDrawer* td, LPCSTR xText);
+	D3DTextDrawer* CrtD3DTextDrawer(LPDIRECT3DDEVICE9 pDev, int x, int y, D3DCOLOR color, LPCSTR fontName, int Size = 8);
+
+	void xDrawText(D3DTextDrawer* td, LPCSTR xText);
+};
+

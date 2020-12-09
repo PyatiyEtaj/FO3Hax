@@ -9,6 +9,8 @@
 #include "Initialization.h"
 #include "InGameScripts.h"
 #include "Packets.h"
+#include "Logger.h"
+#include <FO3/FO3Dll/Stats.h>
 /*#include <CommCtrl.h>
 #pragma comment(lib, "Comctl32")*/
 
@@ -33,7 +35,6 @@ DWORD CALLBACK MainThread(LPVOID args)
 	PBYTE foclient = GetFOClient();
 	Scripts::EnableOneHex(&shift);
 	HANDLE onehexthread = Scripts::EnablePathFinding(&terminateOneHexThread);
-
 	uint nextTime = 0;
 	uint* fotime = (uint*)GET_TIME_PTR;
 	InGameScripts::SetHooks(&nextTime);
@@ -44,6 +45,12 @@ DWORD CALLBACK MainThread(LPVOID args)
 	AnalyzeNetBuffer::InitializationOfAnalyzer();
 	PacketsAnal::SetInlineHook();
 #endif
+	Stats stats;
+	stats.Init(foclient);
+	uchar** chosen = GET_CHOSEN(foclient);
+	Logger::Add("chosen = %p\n", chosen);
+	Logger::Add("chosen = %p\n", *chosen);
+
 
 	while (true)
 	{
@@ -81,12 +88,17 @@ DWORD CALLBACK MainThread(LPVOID args)
 #endif
 			break;
 		}
-
-		D3D::SetOutputText(
-			g_HaxSettings.ShowHealRateCD && nextTime > * fotime
+		std::string healin = g_HaxSettings.ShowHealRateCD && nextTime > *fotime
 			? xorstr("heal in ") + std::to_string(nextTime - *fotime)
-			: ""
-		);
+			: "";
+		std::string statistics = "";
+		if (stats.IsInit) {
+			statistics += "\nAP = " + std::to_string(stats.GetParamAp()) + "/" + std::to_string(stats.GetParamMaxAp());
+			statistics += "\nHp = " + std::to_string(stats.GetParamHp()) + "/" + std::to_string(stats.GetParamMaxHp());
+			statistics += "\nMaxCrit = " + std::to_string(stats.GetParamMaxCritical());
+		}
+		healin += statistics;
+		D3D::SetOutputText(healin);
 
 		Sleep(g_HaxSettings.ThreadLatency);
 	}
