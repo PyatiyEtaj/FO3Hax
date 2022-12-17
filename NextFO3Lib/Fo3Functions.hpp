@@ -26,7 +26,7 @@ namespace FO3
 		bool IsDead(Types::PCritterCl c);
 		bool IsChosen(Types::PCritterCl c);
 		void SetAction(Types::PFOClient fo, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, unsigned int a7, unsigned int a8);
-		void CallLastAttackAction(GlobalState::GlobalObjects go);
+		void CallLastAttackAction(const GlobalState::GlobalObjects* go);
 		Types::PCritterCl GetCritter(Types::PFOClient fo, unsigned int id);
 		bool IsCritterAnim(Types::PCritterCl critter);
 	};

@@ -86,26 +86,26 @@ void FO3::Fo3Functions::SetAction(Types::PFOClient fo, unsigned int a2, unsigned
 	HooksUtil::CallFunctionThisCall<void>((void*)Addresses::SetActionAdr, fo, a2, a3, a4, a5, a6, a7, a8);
 }
 
-void FO3::Fo3Functions::CallLastAttackAction(GlobalState::GlobalObjects go)
+void FO3::Fo3Functions::CallLastAttackAction(const GlobalState::GlobalObjects* go)
 {
-	if (go.Client != nullptr)
+	if (go->Client != nullptr)
 	{
 		auto chosen = GetChosen();
 		if (chosen != nullptr /*&& !functions.IsCritterAnim(chosen)*/)
 		{
-			auto idCritter = go.SetActionArgs[4];
-			auto critter = GetCritter(go.Client, idCritter);
-			if (critter != nullptr /*&& functions.GetAttackDist(chosen) >= functions.GetCrittersDistantion(chosen, critter)*/)
+			auto idCritter = go->SetActionArgs[4];
+			auto critter = GetCritter(go->Client, idCritter);
+			if (critter != nullptr /*&& GetAttackDist(chosen) >= GetCrittersDistantion(chosen, critter)*/)
 			{
 				SetAction(
-					go.Client,
-					go.SetActionArgs[0],
-					go.SetActionArgs[1],
-					go.SetActionArgs[2],
-					go.SetActionArgs[3],
-					go.SetActionArgs[4],
-					go.SetActionArgs[5],
-					go.SetActionArgs[6]);
+					go->Client,
+					go->SetActionArgs[0],
+					go->SetActionArgs[1],
+					go->SetActionArgs[2],
+					go->SetActionArgs[3],
+					go->SetActionArgs[4],
+					go->SetActionArgs[5],
+					go->SetActionArgs[6]);
 			}
 		}
 	}

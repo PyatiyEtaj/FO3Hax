@@ -23,19 +23,49 @@ namespace GlobalState
 
 	class KeyBoard {
 	public:
-		bool Shift = false;
-		bool LeftControl = false;
-		bool Space = false;
+		class KeyStatus {
+		private:
+			SHORT _flags = 0;
+			SHORT _prev = 0;
+
+		public:
+			bool IsUp()
+			{
+				return !IsDown();
+			}
+
+			bool IsDown()
+			{
+				return (_flags & 0x8000) != 0;
+			}
+
+			bool IsPressedOnce()
+			{
+				return (_flags & 0x1) != (_prev & 0x1);
+			}
+
+			void operator= (SHORT flags)
+			{
+				_prev = _flags;
+				_flags = flags;
+			}
+		};
+
+		KeyStatus Shift;
+		KeyStatus LeftControl;
+		KeyStatus Space;
 	};
 
 	class GlobalObjects {
 	public:
 		Types::PFOClient Client = nullptr;
 
+		std::string FormatBuffer;
+
 		Hooks::Hook32* OneHexHook = new Hooks::Hook32(true);
 
 		Hooks::Hook32* SetActionHook = new Hooks::Hook32(true);
-		unsigned int SetActionArgs[7] = {0};
+		unsigned int SetActionArgs[7] = { 0 };
 
 		~GlobalObjects()
 		{

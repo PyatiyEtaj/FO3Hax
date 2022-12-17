@@ -14,24 +14,29 @@ FO3::Fo3Functions Fo3Functions;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
-	Settings.IsConsoleActivate = false;
+	Settings.IsConsoleActivate = true;
+
 	if (Settings.IsConsoleActivate)
 	{
 		Settings.Console->Create();
-		std::cout << "--[ HELLO ]--" << std::endl;
 	}
 
 	Features::Activate();
 
 	while (true)
 	{
-		Keyboard.Shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
-		Keyboard.LeftControl = GetAsyncKeyState(VK_CONTROL) & 0x8000;
-		Keyboard.Space = GetAsyncKeyState(VK_SPACE) & 0x8000;
+		Keyboard.Shift = GetKeyState(VK_SHIFT);
+		Keyboard.LeftControl = GetKeyState(VK_CONTROL);
+		Keyboard.Space = GetKeyState(VK_SPACE);
 
-		if (Keyboard.LeftControl && Keyboard.Space)
+		printf("shift hold[%d] once[%d] up[%d] | ctrl hold[%d] once[%d] up[%d] | space hold[%d] once[%d] up[%d]\r",
+			Keyboard.Shift.IsDown(), Keyboard.Shift.IsPressedOnce(), Keyboard.Shift.IsUp(),
+			Keyboard.LeftControl.IsDown(), Keyboard.LeftControl.IsPressedOnce(), Keyboard.LeftControl.IsUp(),
+			Keyboard.Space.IsDown(), Keyboard.Space.IsPressedOnce(), Keyboard.Space.IsUp());
+
+		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
 		{
-			Fo3Functions.CallLastAttackAction(GObjects);
+			Fo3Functions.CallLastAttackAction(&GObjects);
 		}
 
 		if (GetAsyncKeyState(VK_F4) != 0)

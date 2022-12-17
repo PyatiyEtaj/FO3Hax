@@ -12,7 +12,6 @@ extern GlobalState::GlobalObjects GObjects;
 extern FO3::Fo3Functions Fo3Functions;
 
 namespace Features {
-	std::string BuffStr = "";
 	const char* DrawTextOnHeadFormatBuffer(char* pattern, Types::PCritterCl critter)
 	{
 		auto chosen = Fo3Functions.GetChosen();
@@ -22,21 +21,21 @@ namespace Features {
 		if (Fo3Functions.IsChosen(critter))
 		{
 			auto dist = Fo3Functions.GetAttackDist(chosen);
-			BuffStr = "  [" + std::to_string(dist) + "]";
+			GObjects.FormatBuffer = "  [" + std::to_string(dist) + "]";
 		}
 		else
 		{
 			if (Fo3Functions.IsDead(critter)) return "";
 			auto dist = Fo3Functions.GetCrittersDistantion(chosen, critter);
-			BuffStr = "  [" + std::to_string(dist) + "]";
+			GObjects.FormatBuffer = "  [" + std::to_string(dist) + "]";
 		}
 
-		return BuffStr.c_str();
+		return GObjects.FormatBuffer.c_str();
 	}
 
 	unsigned long __fastcall GetAttackDistHooked(Types::PCritterCl critter, SKIP_ARG)
 	{
-		if (Keyboard.Shift) return 1;
+		if (Keyboard.Shift.IsDown()) return 1;
 
 		return HooksUtil::CallFunctionThisCall<unsigned long>(GObjects.OneHexHook->GetStartOfOriginalFunction(), critter);
 	}
