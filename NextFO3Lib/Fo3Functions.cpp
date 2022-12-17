@@ -53,7 +53,6 @@ void FO3::Fo3Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
 		HooksUtil::DetourFunc((PBYTE)Addresses::DrawTextOnHeadUidFormatBufCallAdr, newFormatBuff);
 		*UIDFlag = TRUE;
 	}
-
 }
 
 void FO3::Fo3Functions::RestoreUIDFlag()

@@ -13,7 +13,7 @@ FO3::Fo3Functions Fo3Functions;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
-	Settings.IsConsoleActivate = true;
+	Settings.IsConsoleActivate = false;
 
 	if (Settings.IsConsoleActivate)
 	{
