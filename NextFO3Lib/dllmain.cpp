@@ -29,11 +29,6 @@ DWORD CALLBACK MainThread(LPVOID _)
 		Keyboard.LeftControl = GetKeyState(VK_CONTROL);
 		Keyboard.Space = GetKeyState(VK_SPACE);
 
-		printf("shift hold[%d] once[%d] up[%d] | ctrl hold[%d] once[%d] up[%d] | space hold[%d] once[%d] up[%d]\r",
-			Keyboard.Shift.IsDown(), Keyboard.Shift.IsPressedOnce(), Keyboard.Shift.IsUp(),
-			Keyboard.LeftControl.IsDown(), Keyboard.LeftControl.IsPressedOnce(), Keyboard.LeftControl.IsUp(),
-			Keyboard.Space.IsDown(), Keyboard.Space.IsPressedOnce(), Keyboard.Space.IsUp());
-
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
 		{
 			Fo3Functions.CallLastAttackAction(&GObjects);
