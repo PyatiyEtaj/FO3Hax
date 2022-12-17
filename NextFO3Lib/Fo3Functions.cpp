@@ -43,7 +43,7 @@ char* FO3::Fo3Functions::SetName(Types::PCritterCl c, std::string newName)
 	return name;
 }
 
-void FO3::Fo3Functions::PatchUIDFlagToFormatBuf(PBYTE newFormatBuff)
+void FO3::Fo3Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
 {
 	DWORD old;
 	auto pushEax = (PBYTE)0x004EBE66;

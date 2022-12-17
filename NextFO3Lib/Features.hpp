@@ -6,7 +6,6 @@
 #include "GlobalState.hpp"
 #include "Fo3Functions.hpp"
 
-
 extern GlobalState::KeyBoard Keyboard;
 extern GlobalState::GlobalObjects GObjects;
 extern FO3::Fo3Functions Fo3Functions;
@@ -57,7 +56,7 @@ namespace Features {
 
 	void Activate()
 	{
-		Fo3Functions.PatchUIDFlagToFormatBuf((PBYTE)DrawTextOnHeadFormatBuffer);
+		Fo3Functions.PatchUIDFlagFormatBufBy((PBYTE)DrawTextOnHeadFormatBuffer);
 
 		GObjects.OneHexHook->Set((PBYTE)Addresses::GetAttackDistAdr, (PBYTE)GetAttackDistHooked, 5);
 

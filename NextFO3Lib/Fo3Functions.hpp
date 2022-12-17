@@ -19,7 +19,7 @@ namespace FO3
 		void DrawTextOnHead(Types::PCritterCl c);
 		char* GetName(Types::PCritterCl c);
 		char* SetName(Types::PCritterCl c, std::string newName);
-		void PatchUIDFlagToFormatBuf(PBYTE newFormatBuff);
+		void PatchUIDFlagFormatBufBy(PBYTE newFormatBuff);
 		void RestoreUIDFlag();
 		bool IsPlayer(Types::PCritterCl c);
 		unsigned int GetAttackDist(Types::PCritterCl c);
