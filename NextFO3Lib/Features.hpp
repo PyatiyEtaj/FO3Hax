@@ -25,7 +25,6 @@ namespace Features {
 		}
 		else
 		{
-			if (Fo3Functions.IsDead(critter)) return "";
 			auto dist = Fo3Functions.GetCrittersDistantion(chosen, critter);
 			GObjects.FormatBuffer = "  [" + std::to_string(dist) + "]";
 		}

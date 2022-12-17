@@ -9,7 +9,6 @@
 GlobalState::Settings Settings;
 GlobalState::KeyBoard Keyboard;
 GlobalState::GlobalObjects GObjects;
-
 FO3::Fo3Functions Fo3Functions;
 
 DWORD CALLBACK MainThread(LPVOID _)
