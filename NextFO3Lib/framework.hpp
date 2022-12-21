@@ -13,11 +13,12 @@ namespace Addresses {
 	const unsigned long GetCrittersDistantionAdr = 0x4817A0;
 	const unsigned long SetVisibleAdr = 0x481110;
 	const unsigned long GetVisibleAdr = 0x481170;
-	const unsigned long DrawTextOnHeadAdr = 0x4EBD10;
-	const unsigned long GetParamAdr = 0x4E8E60;
-	const unsigned long DrawTextOnHeadUidFormatBufCallAdr = 0x4EBE6C;
+	const unsigned long DrawTextOnHeadAdr = 0x4EBF10;
+	const unsigned long GetParamAdr = 0x4E9060;
+	const unsigned long DrawTextOnHeadUidFormatBufCallAdr = 0x4EC06C;
+	const unsigned long DrawTextOnHeadPushCritterObject = 0x4EC066;
 	const unsigned long IsPLayerAdr = 0x463600;
-	const unsigned long GetAttackDistAdr = 0x4E7AD0;
+	const unsigned long GetAttackDistAdr = 0x4E7CD0;
 	const unsigned long CritterIsDeadAdr = 0x463640;
 	const unsigned long IsChosenAdr = 0x463610;
 	const unsigned long SetActionAdr = 0x48BDA0;

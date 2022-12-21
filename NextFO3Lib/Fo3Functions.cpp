@@ -46,7 +46,7 @@ char* FO3::Fo3Functions::SetName(Types::PCritterCl c, std::string newName)
 void FO3::Fo3Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
 {
 	DWORD old;
-	auto pushEax = (PBYTE)0x004EBE66;
+	auto pushEax = (PBYTE)Addresses::DrawTextOnHeadPushCritterObject;
 	if (VirtualProtect(pushEax, 0x16, PAGE_EXECUTE_READWRITE, &old))
 	{
 		*pushEax = 0x56; // patch to push esi -- push object Critter
