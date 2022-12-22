@@ -168,11 +168,16 @@
     <ClInclude Include="framework.hpp" />
     <ClInclude Include="GlobalState.hpp" />
     <ClInclude Include="Hook32.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Resources.hpp" />
     <ClInclude Include="Types.hpp" />
     <ClInclude Include="Util.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

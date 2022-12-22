@@ -58,6 +58,8 @@ namespace GlobalState
 
 	class GlobalObjects {
 	public:
+		HMODULE Dll = nullptr;
+
 		Types::PFOClient Client = nullptr;
 
 		std::string FormatBuffer;
