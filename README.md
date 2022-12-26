@@ -4,6 +4,5 @@
   * one hex (shift)
   * show range between you and other critters.
   * repeat last attack (ctrl+space)
+  * from now on you don't have to click every time you want to attack someone, just hold down lctrl+lmouse
 * FO3DLL is legacy
-
-p.s. 'you' should remove .pdb files from your binaries

@@ -25,4 +25,21 @@ namespace Addresses {
 	const unsigned long GetCritterAdr = 0x47E720;
 	const unsigned long IsAnimation3dPlayingAdr = 0x406DB0;
 	const unsigned long IsCritterAnimAdr = 0x46E870;
+
+	const unsigned long MouseX = 0x0087C25C;
+	const unsigned long MouseY = 0x0087C260;
+	const unsigned long GetMouseAdr = 0x5EAE20;
+	const unsigned long GetAcceleratorNumAdr = 0x53D420;
+	const unsigned long GetCrittersAdr = 0x463BE0;
+
+	const unsigned long CritterHexXAdr = 0x4635C0;
+	const unsigned long CritterHexYAdr = 0x4635D0;
+
+	const unsigned long GetHexPixelAdr = 0x4FE580;
+
+	const unsigned long UIDFlagAdr = 0x87C275;
+
+	const unsigned long FOClientAdr = 0x866538;
+
+	const unsigned long MainWindow = 0x2ED2644;
 }

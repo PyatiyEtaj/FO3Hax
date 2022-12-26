@@ -44,7 +44,6 @@ void Injection()
 
 int main()
 {
-	short prevCtrl = 0;
 	while (true)
 	{
 		if (GetAsyncKeyState(VK_INSERT) & 1) {

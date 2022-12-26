@@ -1,5 +1,6 @@
 #pragma once
 
+#include "framework.hpp"
 #include "Util.hpp"
 #include "Types.hpp"
 #include "Hook32.hpp"
@@ -10,6 +11,7 @@ namespace GlobalState
 	public:
 		bool IsInjected = false;
 		bool IsConsoleActivate = false;
+		bool IsOff = false;
 		Util::Console* Console = new Util::Console();
 
 		~Settings()
@@ -54,6 +56,8 @@ namespace GlobalState
 		KeyStatus Shift;
 		KeyStatus LeftControl;
 		KeyStatus Space;
+		KeyStatus Delete;
+		KeyStatus MouseL;
 	};
 
 	class GlobalObjects {
@@ -68,6 +72,18 @@ namespace GlobalState
 
 		Hooks::Hook32* SetActionHook = new Hooks::Hook32(true);
 		unsigned int SetActionArgs[7] = { 0 };
+
+		PDWORD MainWindow = nullptr;
+
+		Types::PHexManager GetHexManager() 
+		{
+			return Types::PHexManager((char*)Client + 32);
+		}
+
+		PDWORD GetMainWindow()
+		{
+			return PDWORD(*((PDWORD)Addresses::MainWindow));
+		}
 
 		~GlobalObjects()
 		{

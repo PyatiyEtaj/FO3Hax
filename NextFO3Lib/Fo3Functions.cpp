@@ -1,36 +1,36 @@
 #include "Fo3Functions.hpp"
 
-Types::PCritterCl FO3::Fo3Functions::GetChosen()
+Types::PCritterCl FO3::Functions::GetChosen()
 {
 	return HooksUtil::CallFunction<Types::PCritterCl>((void*)Addresses::GetChosenAdr);
 }
 
-unsigned int FO3::Fo3Functions::GetCrittersDistantion(Types::PCritterCl from, Types::PCritterCl to)
+unsigned int FO3::Functions::GetCrittersDistantion(Types::PCritterCl from, Types::PCritterCl to)
 {
 	return HooksUtil::CallFunction<unsigned int>((void*)Addresses::GetCrittersDistantionAdr, from, to);
 }
 
-void FO3::Fo3Functions::SetVisible(Types::PCritterCl c, bool value)
+void FO3::Functions::SetVisible(Types::PCritterCl c, bool value)
 {
 	HooksUtil::CallFunction<void>((void*)Addresses::SetVisibleAdr, c, value);
 }
 
-bool FO3::Fo3Functions::GetVisible(Types::PCritterCl c)
+bool FO3::Functions::GetVisible(Types::PCritterCl c)
 {
 	return HooksUtil::CallFunction<bool>((void*)Addresses::GetVisibleAdr, c);
 }
 
-void FO3::Fo3Functions::DrawTextOnHead(Types::PCritterCl c)
+void FO3::Functions::DrawTextOnHead(Types::PCritterCl c)
 {
 	HooksUtil::CallFunctionThisCall<void>((void*)Addresses::DrawTextOnHeadAdr, c);
 }
 
-char* FO3::Fo3Functions::GetName(Types::PCritterCl c)
+char* FO3::Functions::GetName(Types::PCritterCl c)
 {
 	return (char*)*((DWORD*)c + 1530);
 }
 
-char* FO3::Fo3Functions::SetName(Types::PCritterCl c, std::string newName)
+char* FO3::Functions::SetName(Types::PCritterCl c, std::string newName)
 {
 	if (newName.size() < 0 || newName.size() > 31)
 	{
@@ -43,7 +43,7 @@ char* FO3::Fo3Functions::SetName(Types::PCritterCl c, std::string newName)
 	return name;
 }
 
-void FO3::Fo3Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
+void FO3::Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
 {
 	DWORD old;
 	auto pushEax = (PBYTE)Addresses::DrawTextOnHeadPushCritterObject;
@@ -55,37 +55,37 @@ void FO3::Fo3Functions::PatchUIDFlagFormatBufBy(PBYTE newFormatBuff)
 	}
 }
 
-void FO3::Fo3Functions::RestoreUIDFlag()
+void FO3::Functions::RestoreUIDFlag()
 {
 	*UIDFlag = FALSE;
 }
 
-bool FO3::Fo3Functions::IsPlayer(Types::PCritterCl c)
+bool FO3::Functions::IsPlayer(Types::PCritterCl c)
 {
 	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::IsPLayerAdr, c);
 }
 
-unsigned int FO3::Fo3Functions::GetAttackDist(Types::PCritterCl c)
+unsigned int FO3::Functions::GetAttackDist(Types::PCritterCl c)
 {
 	return HooksUtil::CallFunctionThisCall<unsigned int>((void*)Addresses::GetAttackDistAdr, c);
 }
 
-bool FO3::Fo3Functions::IsDead(Types::PCritterCl c)
+bool FO3::Functions::IsDead(Types::PCritterCl c)
 {
 	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::CritterIsDeadAdr, c);
 }
 
-bool FO3::Fo3Functions::IsChosen(Types::PCritterCl c)
+bool FO3::Functions::IsChosen(Types::PCritterCl c)
 {
 	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::IsChosenAdr, c);
 }
 
-void FO3::Fo3Functions::SetAction(Types::PFOClient fo, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, unsigned int a7, unsigned int a8)
+void FO3::Functions::SetAction(Types::PFOClient fo, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, unsigned int a7, unsigned int a8)
 {
 	HooksUtil::CallFunctionThisCall<void>((void*)Addresses::SetActionAdr, fo, a2, a3, a4, a5, a6, a7, a8);
 }
 
-void FO3::Fo3Functions::CallLastAttackAction(const GlobalState::GlobalObjects* go)
+void FO3::Functions::CallLastAttackAction(const GlobalState::GlobalObjects* go)
 {
 	if (go->Client != nullptr)
 	{
@@ -110,12 +110,27 @@ void FO3::Fo3Functions::CallLastAttackAction(const GlobalState::GlobalObjects* g
 	}
 }
 
-Types::PCritterCl FO3::Fo3Functions::GetCritter(Types::PFOClient fo, unsigned int id)
+Types::PCritterCl FO3::Functions::GetCritter(Types::PFOClient fo, unsigned int id)
 {
 	return HooksUtil::CallFunctionThisCall<Types::PCritterCl>((void*)Addresses::GetCritterAdr, fo, id);
 }
 
-bool FO3::Fo3Functions::IsCritterAnim(Types::PCritterCl critter)
+bool FO3::Functions::IsCritterAnim(Types::PCritterCl critter)
 {
 	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::IsCritterAnimAdr, critter);
+}
+
+unsigned int FO3::Functions::GetCritterHexX(Types::PCritterCl critter)
+{
+	return HooksUtil::CallFunctionThisCall<unsigned int>((void*)Addresses::CritterHexXAdr, critter);
+}
+
+unsigned int FO3::Functions::GetCritterHexY(Types::PCritterCl critter)
+{
+	return HooksUtil::CallFunctionThisCall<unsigned int>((void*)Addresses::CritterHexYAdr, critter);
+}
+
+bool FO3::Functions::GetHexPixel(Types::PHexManager hexManager, int hexX, int hexY, unsigned short* pixelX, unsigned short* pixelY)
+{
+	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::GetHexPixelAdr, hexManager, hexX, hexY, pixelX, pixelY);
 }

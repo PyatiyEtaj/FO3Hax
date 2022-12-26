@@ -10,11 +10,14 @@
 GlobalState::Settings Settings;
 GlobalState::KeyBoard Keyboard;
 GlobalState::GlobalObjects GObjects;
-FO3::Fo3Functions Fo3Functions;
+FO3::Functions Fo3Functions;
+FO3::Mouse InGameMouse;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
-	Settings.IsConsoleActivate = false;
+	GObjects.Client = (Types::PFOClient)(*(PDWORD)Addresses::FOClientAdr);
+
+	Settings.IsConsoleActivate = true;
 
 	if (Settings.IsConsoleActivate)
 	{
@@ -25,25 +28,39 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 	Features::Activate();
 
+	auto mainWindow = GObjects.GetMainWindow();
 	while (true)
 	{
 		Keyboard.Shift = GetKeyState(VK_SHIFT);
 		Keyboard.LeftControl = GetKeyState(VK_CONTROL);
 		Keyboard.Space = GetKeyState(VK_SPACE);
+		Keyboard.Delete = GetKeyState(VK_DELETE);
+		Keyboard.MouseL = GetKeyState(VK_LBUTTON);
+
+		Settings.IsOff =
+			Keyboard.LeftControl.IsDown() &&
+			Keyboard.Delete.IsDown();
+
+
+		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown())
+		{
+			mainWindow[49] = mainWindow[48] | 0xC;
+		}
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
 		{
 			Fo3Functions.CallLastAttackAction(&GObjects);
+			Sleep(200);
 		}
 
-		if (GetAsyncKeyState(VK_F4) != 0)
+		if (Settings.IsOff)
 		{
 			Resources::Notification();
 			Settings.Console->Free();
 			Fo3Functions.RestoreUIDFlag();
 			break;
 		}
-		Sleep(200);
+		Sleep(25);
 	}
 	ExitThread(0);
 }
@@ -57,7 +74,11 @@ LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 	if (GetModuleHandleA(FO3_NAME))
 	{
 		GObjects.Dll = GetModuleHandleA("NextFO3Lib.dll");
-		CreateThread(0, 0, MainThread, 0, 0, 0);
+		auto mainThread = CreateThread(0, 0, MainThread, 0, 0, 0);
+		if (mainThread)
+		{
+			CloseHandle(mainThread);
+		}
 	}
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

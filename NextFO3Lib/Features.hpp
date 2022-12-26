@@ -8,7 +8,7 @@
 
 extern GlobalState::KeyBoard Keyboard;
 extern GlobalState::GlobalObjects GObjects;
-extern FO3::Fo3Functions Fo3Functions;
+extern FO3::Functions Fo3Functions;
 
 namespace Features {
 	const char* DrawTextOnHeadFormatBuffer(char* pattern, Types::PCritterCl critter)
@@ -40,9 +40,9 @@ namespace Features {
 
 	void __fastcall SetAction(Types::PFOClient this_, SKIP_ARG, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, unsigned int a7, unsigned int a8)
 	{
+		GObjects.Client = this_;
 		if (a2 == 6)
 		{
-			GObjects.Client = this_;
 			GObjects.SetActionArgs[0] = a2;
 			GObjects.SetActionArgs[1] = a3;
 			GObjects.SetActionArgs[2] = a4;

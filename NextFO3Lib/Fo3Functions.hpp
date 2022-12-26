@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "Types.hpp"
 #include "Hook32.hpp"
 #include "GlobalState.hpp"
@@ -7,9 +9,15 @@
 
 namespace FO3
 {
-	class Fo3Functions {
+	class Mouse {
 	public:
-		PBYTE UIDFlag = (PBYTE)0x87C275;
+		PDWORD X = (PDWORD)Addresses::MouseX;
+		PDWORD Y = (PDWORD)Addresses::MouseY;
+	};
+
+	class Functions {
+	public:
+		PBYTE UIDFlag = (PBYTE)Addresses::UIDFlagAdr;
 
 	public:
 		Types::PCritterCl GetChosen();
@@ -29,5 +37,8 @@ namespace FO3
 		void CallLastAttackAction(const GlobalState::GlobalObjects* go);
 		Types::PCritterCl GetCritter(Types::PFOClient fo, unsigned int id);
 		bool IsCritterAnim(Types::PCritterCl critter);
+		unsigned int GetCritterHexX(Types::PCritterCl critter);
+		unsigned int GetCritterHexY(Types::PCritterCl critter);
+		bool GetHexPixel(Types::PHexManager hexManager, int hexX, int hexY, unsigned short* pixelX, unsigned short* pixelY);
 	};
 }
