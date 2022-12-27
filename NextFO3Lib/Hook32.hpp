@@ -111,7 +111,7 @@ namespace Hooks {
 			{
 				Init(functionToHook, newFunction, countOfSafeByte);
 				if (SetHook(_newFunction, _functionToHook)) {
-					_startOriginalFunction = CreateJmpToOririginalFuncion(_countOfSafeByte, _functionToHook, _originalCode);
+					_startOriginalFunction = CreateJmpToOriginalFunction(_countOfSafeByte, _functionToHook, _originalCode);
 					_isSetted = true;
 
 					return true;
@@ -175,7 +175,7 @@ namespace Hooks {
 			_isSetted = false;
 		}
 
-		PBYTE CreateJmpToOririginalFuncion(DWORD safe, PBYTE adr, BYTE* originalCode)
+		PBYTE CreateJmpToOriginalFunction(DWORD safe, PBYTE adr, BYTE* originalCode)
 		{
 			PBYTE changedCode = (PBYTE)malloc(Hooks_Hooks32_BYTES_BACKUP);
 			if (changedCode)
