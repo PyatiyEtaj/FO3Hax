@@ -66,6 +66,10 @@ namespace GlobalState
 
 		Types::PFOClient Client = nullptr;
 
+		Types::PHexManager HexManager = nullptr;
+
+		PDWORD MainWindow = nullptr;
+
 		std::string FormatBuffer;
 
 		Hooks::Hook32* OneHexHook = new Hooks::Hook32(true);
@@ -73,16 +77,11 @@ namespace GlobalState
 		Hooks::Hook32* SetActionHook = new Hooks::Hook32(true);
 		unsigned int SetActionArgs[7] = { 0 };
 
-		PDWORD MainWindow = nullptr;
-
-		Types::PHexManager GetHexManager() 
+		void Init()
 		{
-			return Types::PHexManager((char*)Client + 32);
-		}
-
-		PDWORD GetMainWindow()
-		{
-			return PDWORD(*((PDWORD)Addresses::MainWindow));
+			MainWindow = PDWORD(*((PDWORD)Addresses::MainWindow));
+			Client = Types::PFOClient(*(PDWORD)Addresses::FOClientAdr);
+			HexManager = Types::PHexManager((char*)Client + 32);
 		}
 
 		~GlobalObjects()

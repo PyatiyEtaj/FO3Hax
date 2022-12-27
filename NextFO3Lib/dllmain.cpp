@@ -15,9 +15,8 @@ FO3::Mouse InGameMouse;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
-	GObjects.Client = (Types::PFOClient)(*(PDWORD)Addresses::FOClientAdr);
-
-	Settings.IsConsoleActivate = true;
+	GObjects.Init();
+	Settings.IsConsoleActivate = false;
 
 	if (Settings.IsConsoleActivate)
 	{
@@ -28,7 +27,6 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 	Features::Activate();
 
-	auto mainWindow = GObjects.GetMainWindow();
 	while (true)
 	{
 		Keyboard.Shift = GetKeyState(VK_SHIFT);
@@ -44,7 +42,7 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown())
 		{
-			mainWindow[49] = mainWindow[48] | 0xC;
+			GObjects.MainWindow[49] = GObjects.MainWindow[48] | 0xC;
 		}
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
