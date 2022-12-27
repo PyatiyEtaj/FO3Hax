@@ -14,13 +14,13 @@ FO3::Functions Fo3Functions;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
-	GObjects.Init();
 	Settings.IsConsoleActivate = false;
 
 	if (Settings.IsConsoleActivate)
 	{
 		Settings.Console->Create();
 	}
+	GObjects.Init();
 
 	Resources::Notification();
 
@@ -39,9 +39,10 @@ DWORD CALLBACK MainThread(LPVOID _)
 			Keyboard.Delete.IsDown();
 		//////////////////////////////////////////////////////////////
 
-		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown())
+		auto mw = GObjects.MainWindow();
+		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown() && mw != nullptr)
 		{
-			GObjects.MainWindow[49] = GObjects.MainWindow[48] | 0xC;
+			mw[49] = mw[48] | 0xC;
 		}
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())

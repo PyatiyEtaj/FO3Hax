@@ -66,9 +66,13 @@ namespace GlobalState
 
 		Types::PFOClient Client = nullptr;
 
-		Types::PHexManager HexManager = nullptr;
+		Types::PHexManager HexManager() {
+			return Client == nullptr ? nullptr : Types::PHexManager((char*)Client + 32);
+		}
 
-		PDWORD MainWindow = nullptr;
+		PDWORD MainWindow() {
+			return PDWORD(*((PDWORD)Addresses::MainWindow));
+		};
 
 		std::string FormatBuffer;
 
@@ -79,9 +83,7 @@ namespace GlobalState
 
 		void Init()
 		{
-			MainWindow = PDWORD(*((PDWORD)Addresses::MainWindow));
 			Client = Types::PFOClient(*(PDWORD)Addresses::FOClientAdr);
-			HexManager = Types::PHexManager((char*)Client + 32);
 		}
 
 		~GlobalObjects()
