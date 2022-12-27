@@ -25,6 +25,9 @@ namespace Addresses {
 	const unsigned long GetCritterAdr = 0x47E720;
 	const unsigned long IsAnimation3dPlayingAdr = 0x406DB0;
 	const unsigned long IsCritterAnimAdr = 0x46E870;
+	const unsigned long CritterIsFinish = 0x463890;
+	const unsigned long CritterIsFree = 0x463860;
+	const unsigned long CritterRealAp = 0x463750;
 
 	const unsigned long MouseX = 0x0087C25C;
 	const unsigned long MouseY = 0x0087C260;

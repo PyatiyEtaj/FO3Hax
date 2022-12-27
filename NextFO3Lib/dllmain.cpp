@@ -50,7 +50,7 @@ DWORD CALLBACK MainThread(LPVOID _)
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
 		{
 			Fo3Functions.CallLastAttackAction(&GObjects);
-			Sleep(200);
+			Sleep(125);
 		}
 
 		if (Settings.IsOff)

@@ -19,8 +19,9 @@ namespace Features {
 
 		if (Fo3Functions.IsChosen(critter))
 		{
-			auto dist = Fo3Functions.GetAttackDist(chosen);
-			GObjects.FormatBuffer = "  [" + std::to_string(dist) + "]";
+			//auto dist = Fo3Functions.GetAttackDist(chosen);
+			auto realAp = Fo3Functions.RealAp(chosen);
+			GObjects.FormatBuffer = "  [" + std::to_string(realAp) + "]";
 		}
 		else
 		{

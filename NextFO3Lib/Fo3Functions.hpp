@@ -40,5 +40,8 @@ namespace FO3
 		unsigned int GetCritterHexX(Types::PCritterCl critter);
 		unsigned int GetCritterHexY(Types::PCritterCl critter);
 		bool GetHexPixel(Types::PHexManager hexManager, int hexX, int hexY, unsigned short* pixelX, unsigned short* pixelY);
+		bool IsFinish(Types::PCritterCl critter);
+		bool IsFree(Types::PCritterCl critter);
+		int RealAp(Types::PCritterCl critter);
 	};
 }

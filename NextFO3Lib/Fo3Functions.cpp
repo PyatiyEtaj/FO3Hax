@@ -134,3 +134,18 @@ bool FO3::Functions::GetHexPixel(Types::PHexManager hexManager, int hexX, int he
 {
 	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::GetHexPixelAdr, hexManager, hexX, hexY, pixelX, pixelY);
 }
+
+bool FO3::Functions::IsFinish(Types::PCritterCl critter)
+{
+	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::CritterIsFinish, critter);
+}
+
+bool FO3::Functions::IsFree(Types::PCritterCl critter)
+{
+	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::CritterIsFree, critter);
+}
+
+int FO3::Functions::RealAp(Types::PCritterCl critter)
+{
+	return HooksUtil::CallFunctionThisCall<int>((void*)Addresses::CritterRealAp, critter);
+}
