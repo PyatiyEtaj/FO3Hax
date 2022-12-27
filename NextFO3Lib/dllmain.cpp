@@ -11,7 +11,6 @@ GlobalState::Settings Settings;
 GlobalState::KeyBoard Keyboard;
 GlobalState::GlobalObjects GObjects;
 FO3::Functions Fo3Functions;
-FO3::Mouse InGameMouse;
 
 DWORD CALLBACK MainThread(LPVOID _)
 {
@@ -38,7 +37,7 @@ DWORD CALLBACK MainThread(LPVOID _)
 		Settings.IsOff =
 			Keyboard.LeftControl.IsDown() &&
 			Keyboard.Delete.IsDown();
-
+		//////////////////////////////////////////////////////////////
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown())
 		{
