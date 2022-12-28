@@ -44,15 +44,5 @@ void Injection()
 
 int main()
 {
-	//Injection();
-	while (true)
-	{
-		if (GetAsyncKeyState(VK_INSERT) & 1) {
-			if (!hhk) {
-				Injection();
-				break;
-			}
-		}
-		Sleep(200);
-	}
+	Injection();
 }

@@ -15,6 +15,14 @@ namespace FO3
 		PDWORD Y = (PDWORD)Addresses::MouseY;
 	};
 
+	enum class MouseType
+	{
+		ContextMenu = 0,
+		InvCursor = 6,
+		Move = 1,
+		Attack = 3,
+	};
+
 	class Functions {
 	public:
 		PBYTE UIDFlag = (PBYTE)Addresses::UIDFlagAdr;
@@ -43,5 +51,7 @@ namespace FO3
 		bool IsFinish(Types::PCritterCl critter);
 		bool IsFree(Types::PCritterCl critter);
 		int RealAp(Types::PCritterCl critter);
+		void SetCursorMode(FO3::MouseType type);
+		void AutoClick(const GlobalState::GlobalObjects* go);
 	};
 }

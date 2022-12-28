@@ -58,6 +58,7 @@ namespace GlobalState
 		KeyStatus Space;
 		KeyStatus Delete;
 		KeyStatus MouseL;
+		KeyStatus MouseR;
 	};
 
 	class GlobalObjects {
@@ -66,11 +67,13 @@ namespace GlobalState
 
 		Types::PFOClient Client = nullptr;
 
-		Types::PHexManager HexManager() {
+		Types::PHexManager HexManager() const
+		{
 			return Client == nullptr ? nullptr : Types::PHexManager((char*)Client + 32);
 		}
 
-		PDWORD MainWindow() {
+		PDWORD MainWindow() const
+		{
 			return PDWORD(*((PDWORD)Addresses::MainWindow));
 		};
 

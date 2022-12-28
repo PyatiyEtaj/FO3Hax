@@ -45,4 +45,6 @@ namespace Addresses {
 	const unsigned long FOClientAdr = 0x866538;
 
 	const unsigned long MainWindow = 0x2ED2644;
+
+	const unsigned long SetCursorMode = 0x467F40;
 }

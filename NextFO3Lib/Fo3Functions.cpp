@@ -149,3 +149,19 @@ int FO3::Functions::RealAp(Types::PCritterCl critter)
 {
 	return HooksUtil::CallFunctionThisCall<int>((void*)Addresses::CritterRealAp, critter);
 }
+
+void FO3::Functions::SetCursorMode(FO3::MouseType type)
+{
+	HooksUtil::CallFunction<void>((void*)Addresses::SetCursorMode, (int)type);
+}
+
+void FO3::Functions::AutoClick(const GlobalState::GlobalObjects* go)
+{
+	auto mw = go->MainWindow();
+	auto cursor = *((DWORD*)go->Client + 136);
+	if (mw != nullptr && cursor == (DWORD)FO3::MouseType::Attack)
+	{
+		SetCursorMode(FO3::MouseType::Attack);
+		mw[49] = mw[48] | 0xC;
+	}
+}

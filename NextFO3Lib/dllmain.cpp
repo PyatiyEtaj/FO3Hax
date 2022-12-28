@@ -20,6 +20,7 @@ DWORD CALLBACK MainThread(LPVOID _)
 	{
 		Settings.Console->Create();
 	}
+
 	GObjects.Init();
 
 	Resources::Notification();
@@ -28,21 +29,22 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 	while (true)
 	{
+		/////////////////////////////////////////////////////////////
 		Keyboard.Shift = GetKeyState(VK_SHIFT);
 		Keyboard.LeftControl = GetKeyState(VK_CONTROL);
 		Keyboard.Space = GetKeyState(VK_SPACE);
 		Keyboard.Delete = GetKeyState(VK_DELETE);
 		Keyboard.MouseL = GetKeyState(VK_LBUTTON);
+		Keyboard.MouseR = GetKeyState(VK_RBUTTON);
 
 		Settings.IsOff =
 			Keyboard.LeftControl.IsDown() &&
 			Keyboard.Delete.IsDown();
-		//////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////
 
-		auto mw = GObjects.MainWindow();
-		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown() && mw != nullptr)
+		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown() && Keyboard.MouseR.IsUp())
 		{
-			mw[49] = mw[48] | 0xC;
+			Fo3Functions.AutoClick(&GObjects);
 		}
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
