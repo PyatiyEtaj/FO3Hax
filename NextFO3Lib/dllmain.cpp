@@ -63,7 +63,6 @@ DWORD CALLBACK MainThread(LPVOID _)
 			Resources::Notification();
 			Settings.Console->Free();
 			Fo3Functions.RestoreUIDFlag();
-			h->Unset();
 			break;
 		}
 		Sleep(25);
