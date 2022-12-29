@@ -87,7 +87,7 @@ void FO3::Functions::SetAction(Types::PFOClient fo, unsigned int a2, unsigned in
 
 void FO3::Functions::CallLastAttackAction(const GlobalState::GlobalObjects* go)
 {
-	if (go->Client != nullptr)
+	if (go->Client != nullptr && go->IsInFocus())
 	{
 		auto chosen = GetChosen();
 		if (chosen != nullptr /*&& !functions.IsCritterAnim(chosen)*/)
@@ -130,9 +130,9 @@ unsigned int FO3::Functions::GetCritterHexY(Types::PCritterCl critter)
 	return HooksUtil::CallFunctionThisCall<unsigned int>((void*)Addresses::CritterHexYAdr, critter);
 }
 
-bool FO3::Functions::GetHexPixel(Types::PHexManager hexManager, int hexX, int hexY, unsigned short* pixelX, unsigned short* pixelY)
+bool FO3::Functions::GetHexPixel(Types::PHexManager hexManager, int pixelX, int pixelY, unsigned short* hexX, unsigned short* hexY)
 {
-	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::GetHexPixelAdr, hexManager, hexX, hexY, pixelX, pixelY);
+	return HooksUtil::CallFunctionThisCall<bool>((void*)Addresses::GetHexPixelAdr, hexManager, pixelX, pixelY, hexX, hexY);
 }
 
 bool FO3::Functions::IsFinish(Types::PCritterCl critter)
@@ -155,13 +155,27 @@ void FO3::Functions::SetCursorMode(FO3::MouseType type)
 	HooksUtil::CallFunction<void>((void*)Addresses::SetCursorMode, (int)type);
 }
 
-void FO3::Functions::AutoClick(const GlobalState::GlobalObjects* go)
+bool FO3::Functions::AutoClick(const GlobalState::GlobalObjects* go)
 {
-	auto mw = go->MainWindow();
-	auto cursor = *((DWORD*)go->Client + 136);
-	if (mw != nullptr && cursor == (DWORD)FO3::MouseType::Attack)
+	if (go->Client != nullptr)
 	{
-		SetCursorMode(FO3::MouseType::Attack);
-		mw[49] = mw[48] | 0xC;
+		auto critter = GetCritterPixel(go->HexManager(), *(go->Mouse.X), *(go->Mouse.Y), true);
+		if (critter != nullptr && !IsDead(critter))
+		{
+			GameLMouseDown(go->Client);
+			return true;
+		}
 	}
+
+	return false;
+}
+
+void FO3::Functions::GameLMouseDown(Types::PFOClient client)
+{
+	return HooksUtil::CallFunctionThisCall<void>((void*)Addresses::GameLMouseDown, client);
+}
+
+Types::PCritterCl FO3::Functions::GetCritterPixel(Types::PHexManager hexManager, int mouseX, int mouseY, bool bool1)
+{
+	return HooksUtil::CallFunctionThisCall<Types::PCritterCl>((void*)Addresses::GetCritterPixel, hexManager, mouseX, mouseY, bool1);
 }

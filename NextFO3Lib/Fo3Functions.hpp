@@ -9,20 +9,6 @@
 
 namespace FO3
 {
-	class Mouse {
-	public:
-		PDWORD X = (PDWORD)Addresses::MouseX;
-		PDWORD Y = (PDWORD)Addresses::MouseY;
-	};
-
-	enum class MouseType
-	{
-		ContextMenu = 0,
-		InvCursor = 6,
-		Move = 1,
-		Attack = 3,
-	};
-
 	class Functions {
 	public:
 		PBYTE UIDFlag = (PBYTE)Addresses::UIDFlagAdr;
@@ -47,11 +33,13 @@ namespace FO3
 		bool IsCritterAnim(Types::PCritterCl critter);
 		unsigned int GetCritterHexX(Types::PCritterCl critter);
 		unsigned int GetCritterHexY(Types::PCritterCl critter);
-		bool GetHexPixel(Types::PHexManager hexManager, int hexX, int hexY, unsigned short* pixelX, unsigned short* pixelY);
+		bool GetHexPixel(Types::PHexManager hexManager, int pixelX, int pixelY, unsigned short* hexX, unsigned short* hexY);
 		bool IsFinish(Types::PCritterCl critter);
 		bool IsFree(Types::PCritterCl critter);
 		int RealAp(Types::PCritterCl critter);
 		void SetCursorMode(FO3::MouseType type);
-		void AutoClick(const GlobalState::GlobalObjects* go);
+		bool AutoClick(const GlobalState::GlobalObjects* go);
+		void GameLMouseDown(Types::PFOClient client);
+		Types::PCritterCl GetCritterPixel(Types::PHexManager hexManager, int mouseX, int mouseY, bool bool1);
 	};
 }

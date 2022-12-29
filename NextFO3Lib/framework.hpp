@@ -47,4 +47,8 @@ namespace Addresses {
 	const unsigned long MainWindow = 0x2ED2644;
 
 	const unsigned long SetCursorMode = 0x467F40;
+
+	const unsigned long GameLMouseDown = 0x4D7200;
+
+	const unsigned long GetCritterPixel = 0x506960;
 }

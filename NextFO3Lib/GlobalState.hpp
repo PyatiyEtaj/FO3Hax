@@ -67,6 +67,15 @@ namespace GlobalState
 
 		Types::PFOClient Client = nullptr;
 
+		FO3::Mouse Mouse;
+
+		std::string FormatBuffer;
+
+		Hooks::Hook32* OneHexHook = new Hooks::Hook32(true);
+
+		Hooks::Hook32* SetActionHook = new Hooks::Hook32(true);
+		unsigned int SetActionArgs[7] = { 0 };
+
 		Types::PHexManager HexManager() const
 		{
 			return Client == nullptr ? nullptr : Types::PHexManager((char*)Client + 32);
@@ -77,12 +86,11 @@ namespace GlobalState
 			return PDWORD(*((PDWORD)Addresses::MainWindow));
 		};
 
-		std::string FormatBuffer;
-
-		Hooks::Hook32* OneHexHook = new Hooks::Hook32(true);
-
-		Hooks::Hook32* SetActionHook = new Hooks::Hook32(true);
-		unsigned int SetActionArgs[7] = { 0 };
+		bool IsInFocus() const
+		{
+			auto wnd = MainWindow();
+			return wnd != nullptr ? *((BYTE*)wnd + 164) != 0 : false;
+		}
 
 		void Init()
 		{

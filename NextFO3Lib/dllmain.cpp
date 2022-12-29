@@ -27,6 +27,8 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 	Features::Activate();
 
+	FO3::Mouse mouse;
+
 	while (true)
 	{
 		/////////////////////////////////////////////////////////////
@@ -44,7 +46,10 @@ DWORD CALLBACK MainThread(LPVOID _)
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.MouseL.IsDown() && Keyboard.MouseR.IsUp())
 		{
-			Fo3Functions.AutoClick(&GObjects);
+			if (Fo3Functions.AutoClick(&GObjects))
+			{
+				Sleep(175);
+			}
 		}
 
 		if (Keyboard.LeftControl.IsDown() && Keyboard.Space.IsDown())
@@ -58,6 +63,7 @@ DWORD CALLBACK MainThread(LPVOID _)
 			Resources::Notification();
 			Settings.Console->Free();
 			Fo3Functions.RestoreUIDFlag();
+			h->Unset();
 			break;
 		}
 		Sleep(25);
