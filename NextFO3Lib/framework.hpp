@@ -26,8 +26,8 @@ namespace Addresses {
 	const unsigned long CritterIsFinish				= 0x463890;
 	const unsigned long CritterIsFree				= 0x463860;
 	const unsigned long CritterRealAp				= 0x463750;
-	const unsigned long MouseX						= 0x0087C25C;
-	const unsigned long MouseY						= 0x0087C260;
+	const unsigned long MouseX						= 0x87C25C;
+	const unsigned long MouseY						= 0x87C260;
 	const unsigned long CritterHexXAdr				= 0x4635C0;
 	const unsigned long CritterHexYAdr				= 0x4635D0;
 	const unsigned long GetHexPixelAdr				= 0x4FE5B0;
