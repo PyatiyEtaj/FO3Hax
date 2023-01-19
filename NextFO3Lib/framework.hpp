@@ -40,15 +40,15 @@ namespace Addresses {
 
 	/// <summary>
 	/// E8 3F 07 05 00     call    ?FormatBuf@Str@@YAPBDPBDZZ
-	/// 50                 push    eax; unsigned int
-	/// 8D 95 FC DF FF FF  lea     edx, [ebp + var_2004]
+	/// 50                 push    eax
+	/// 8D 95 FC DF FF FF  lea     edx
 	/// </summary>
 	const unsigned long DrawTextOnHeadUidFormatBufCallAdr = 0x4EC09C;
 
 	/// <summary>
 	/// 50                 push    eax
-	/// 68 F4 C8 74 00     push    offset aU_3; " <%u>"
-	/// E8 3F 07 05 00     call ? FormatBuf@Str@@YAPBDPBDZZ;
+	/// 68 F4 C8 74 00     push    offset aU_3
+	/// E8 3F 07 05 00     call    ?FormatBuf
 	/// </summary>
 	const unsigned long DrawTextOnHeadPushCritterObject = 0x4EC096;
 }
